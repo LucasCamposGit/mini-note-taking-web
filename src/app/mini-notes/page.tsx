@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import "@/lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
+import MiniNotesInput from "./components/MiniNotesInput";
 
 export default function MiniNotes() {
   return (
@@ -12,22 +12,7 @@ export default function MiniNotes() {
           Mini Note-Taking
         </h1>
 
-        <div className="p-4 rounded-xl note-card mb-4">
-          <div className="flex">
-            <div className="flex-grow">
-              <textarea
-                className="w-full p-2 rounded-lg resize-none border-0 bg-transparent note-input-area focus:outline-none text-white"
-                placeholder="What's your deepest thought?"
-              ></textarea>
-              <div className="flex justify-between items-center mt-2">
-                <div className="text-sm text-gray-400">0 / 280</div>
-                <button className="btn-tweet py-1 px-4 rounded-full disabled:opacity-50">
-                  Take note
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MiniNotesInput />
 
         <div className="note-card p-4 my-2 rounded-xl">
           <div className="flex">
@@ -43,7 +28,7 @@ export default function MiniNotes() {
                 </div>
               </div>
               <button className="text-sm text-gray-500 hover:text-blue-400 mt-2 flex items-center">
-                <span className="mr-1">Show 3 replies</span>
+                <span className="mr-1 ">Show 3 replies</span>
                 <FontAwesomeIcon icon={["fas", "chevron-down"]} className="w-3" />
               </button>
             </div>

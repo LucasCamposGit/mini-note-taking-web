@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #15202b;
+  background-color: #010b14;
   color: white;
 }
 .note-card {
@@ -28,7 +28,7 @@ body {
   background-color: #15202b;
 }
 .btn-tweet {
-  background-color: #1d9bf0;
+  background-color: #0b629c;
   color: white;
   border-radius: 9999px;
   font-weight: bold;
