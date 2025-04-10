@@ -1,26 +1,48 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #15202b;
+  color: white;
+}
+.note-card {
+  border: 1px solid #38444d;
+}
+.note-card:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.avatar {
+  width: 48px;
+  height: 48px;
+  background-color: #38444d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8899a6;
+  font-weight: bold;
+}
+.note-input-area {
+  border-color: #38444d;
+  background-color: #15202b;
+}
+.btn-tweet {
+  background-color: #1d9bf0;
+  color: white;
+  border-radius: 9999px;
+  font-weight: bold;
+}
+.btn-tweet:hover {
+  background-color: #1a91da;
+}
+.action-icons i {
+  color: #8899a6;
+  cursor: pointer;
+}
+.action-icons i:hover {
+  color: #1d9bf0;
+}
+.replies-container {
+  border-left: 2px solid #38444d;
 }
