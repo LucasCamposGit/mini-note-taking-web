@@ -3,14 +3,13 @@ import Image from "next/image";
 import "@/lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MiniNotesInput from "./components/MiniNotesInput";
+import MiniNotesTitle from "./components/MiniNotesTitle";
 
 export default function MiniNotes() {
   return (
     <main className="min-h-screen p-4 md:p-6">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-xl md:text-2xl font-bold mb-4 text-blue-300 text-center">
-          Mini Note-Taking
-        </h1>
+        <MiniNotesTitle />
 
         <MiniNotesInput />
 
