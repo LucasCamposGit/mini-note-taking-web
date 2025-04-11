@@ -5,7 +5,7 @@ export default function MiniNotesInput() {
         <div className="flex-grow">
           <div className="relative">
             <textarea
-              className="w-full p-2 rounded-lg resize-none border-0 bg-transparent text-white placeholder-transparent focus:outline-none peer"
+              className="w-full p-2 rounded-lg resize-none border-0 bg-transparent text-sm text-white placeholder-transparent focus:outline-none peer"
               placeholder="Write your deepest thought — begin with a whisper"
             ></textarea>
             <div className="absolute top-2 left-2 pointer-events-none text-sm peer-focus:hidden">
