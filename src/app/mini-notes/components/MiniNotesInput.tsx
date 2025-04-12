@@ -2,50 +2,43 @@ import React, { useReducer } from "react";
 
 enum ACTION {
   SUBMIT_NOTE = "submit_note",
-  TYPING = "typing"
+  TYPING = "typing",
 }
 
-type DispatchAction  = {
+type DispatchAction = {
   type: ACTION;
   payload: any;
-}
+};
 
 interface State {
-  value: string
+  value: string;
 }
 
 function reducer(state: State, action: DispatchAction): State {
-
   switch (action.type) {
     case ACTION.TYPING:
-      console.log(action.payload)
       return {
         ...state,
-        value: action.payload
+        value: action.payload,
       };
 
-    default: 
+    default:
       return state;
   }
 }
 
-
-function handleSubmit(event: React.MouseEvent) {
-
-}
-
+function handleSubmit(event: React.MouseEvent) {}
 
 const baseState: State = {
-  value: ""
-}
+  value: "",
+};
 
 export default function MiniNotesInput() {
-  const [state, dispatch] = useReducer(reducer, baseState)
+  const [state, dispatch] = useReducer(reducer, baseState);
 
   function handleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    dispatch({type: ACTION.TYPING, payload: event.target.value})
+    dispatch({ type: ACTION.TYPING, payload: event.target.value });
   }
-  
 
   return (
     <div className="p-4 rounded-xl note-card mb-4">
@@ -64,8 +57,11 @@ export default function MiniNotesInput() {
             </div>
           </div>
           <div className="flex justify-between items-center mt-2">
-            <div className="text-sm text-gray-400">0 / 280</div>
-            <button onClick={handleSubmit} className="btn-tweet py-1 px-4 rounded-full disabled:opacity-50">
+            <div className="text-sm text-gray-400">{state.value.length} / 280</div>
+            <button
+              onClick={handleSubmit}
+              className="btn-tweet py-1 px-4 rounded-full disabled:opacity-50"
+            >
               Take note
             </button>
           </div>
