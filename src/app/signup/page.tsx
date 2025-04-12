@@ -3,10 +3,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "@/lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import useFetch from "@/hooks/useFetch";
 import { useGoogleLogin } from "@react-oauth/google";
 import { LOGIN_CONTEXT_ACTIONS, useLoginDispatch } from "@/context/LoginContext";
 import { useRouter } from "next/navigation";
+
+library.add(faGoogle);
 
 export default function SignUpPage() {
   const { fetchData } = useFetch();
@@ -25,9 +29,9 @@ export default function SignUpPage() {
         setIsLoading(true);
         setError(null);
         
-        const data = await fetchData("/api/auth/google", "POST", {
+        const data = await fetchData("/api/google-login", "POST", {
           token: tokenResponse.access_token,
-        });
+        }, false);
 
         if (data?.token && data?.refresh_token) {
           localStorage.setItem("access_token", data.token);
@@ -37,7 +41,7 @@ export default function SignUpPage() {
             type: LOGIN_CONTEXT_ACTIONS.LOGIN,
           });
           
-          router.push("/notes");
+          router.push("/mini-notes");
         } else {
           throw new Error("Invalid response from server");
         }

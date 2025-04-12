@@ -20,16 +20,22 @@ const useFetch = () => {
   const fetchData = async (
     path: string,
     method: string,
-    body: any | null = null
+    body: any | null = null,
+    authRequired: boolean = true
   ): Promise<any> => {
     try {
       const url = `${apiUrl}${path}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      
+      if (authRequired && token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
       const options: RequestInit = {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
         body: body ? JSON.stringify(body) : null,
       };
 
