@@ -5,57 +5,17 @@ import "@/lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import useFetch from "@/hooks/useFetch";
-import { useGoogleLogin } from "@react-oauth/google";
-import { LOGIN_CONTEXT_ACTIONS, useLoginDispatch } from "@/context/LoginContext";
-import { useRouter } from "next/navigation";
+import useGoogleSignIn from "./hooks/useGoogleSignIn";
 
 library.add(faGoogle);
 
 export default function SignUpPage() {
-  const { fetchData } = useFetch();
-  const loginDispatch = useLoginDispatch();
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const errorP = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const spinnerRef = useRef<HTMLDivElement>(null);
   const buttonTextRef = useRef<HTMLSpanElement>(null);
-
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        
-        const data = await fetchData("/api/google-login", "POST", {
-          token: tokenResponse.access_token,
-        }, false);
-
-        if (data?.token && data?.refresh_token) {
-          localStorage.setItem("access_token", data.token);
-          localStorage.setItem("refresh_token", data.refresh_token);
-          
-          loginDispatch({
-            type: LOGIN_CONTEXT_ACTIONS.LOGIN,
-          });
-          
-          router.push("/mini-notes");
-        } else {
-          throw new Error("Invalid response from server");
-        }
-      } catch (err) {
-        setError("Failed to sign in with Google. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    onError: () => {
-      setError("Failed to sign in with Google. Please try again.");
-      setIsLoading(false);
-    },
-  });
+  const { login, isLoading, error } = useGoogleSignIn()
+  
 
   useEffect(() => {
     if (errorP.current) {
@@ -68,21 +28,19 @@ export default function SignUpPage() {
   }, [error]);
 
   useEffect(() => {
-    if (buttonRef.current && spinnerRef.current && buttonTextRef.current) {
-      if (isLoading) {
-        buttonRef.current.disabled = true;
-        buttonRef.current.style.opacity = "0.75";
-        buttonRef.current.style.cursor = "not-allowed";
-        spinnerRef.current.style.display = "block";
-        buttonTextRef.current.textContent = "Signing in...";
-      } else {
-        buttonRef.current.disabled = false;
-        buttonRef.current.style.opacity = "1";
-        buttonRef.current.style.cursor = "pointer";
-        spinnerRef.current.style.display = "none";
-        buttonTextRef.current.textContent = "Continue with Google";
-      }
-    }
+    const button = buttonRef.current;
+    const spinner = spinnerRef.current;
+    const text = buttonTextRef.current;
+  
+    if (!button || !spinner || !text) return;
+  
+    const isActive = !isLoading;
+  
+    button.disabled = !isActive;
+    button.style.opacity = isActive ? "1" : "0.75";
+    button.style.cursor = isActive ? "pointer" : "not-allowed";
+    spinner.style.display = isActive ? "none" : "block";
+    text.textContent = isActive ? "Continue with Google" : "Signing in...";
   }, [isLoading]);
 
   return (
@@ -108,7 +66,7 @@ export default function SignUpPage() {
           />
           <FontAwesomeIcon 
             icon={["fab", "google"]} 
-            className="text-xl"
+            className="text-xl w-5"
             style={{ display: isLoading ? 'none' : 'block' }}
           />
           <span ref={buttonTextRef}>Continue with Google</span>
