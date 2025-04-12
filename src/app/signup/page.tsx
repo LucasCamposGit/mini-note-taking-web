@@ -1,17 +1,29 @@
 import React from "react";
 import "@/lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import useFetch from "@/hooks/useFetch";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function SignUpPage() {
+  const { fetchData } = useFetch();
+
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const data = fetchData("/api/auth/google", "POST", {
+        token: tokenResponse.access_token,
+      });
+    },
+  });
+
   return (
     <main className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm text-center space-y-6">
         <h1 className="text-3xl font-bold">Sign in</h1>
-        <p className="text-zinc-400 text-sm">One button. No passwords. Just Google.</p>
+        <p className="text-zinc-400 text-sm">
+          One button. No passwords. Just Google.
+        </p>
 
-        <button
-          className="w-full flex items-center justify-center space-x-3 px-4 py-2 bg-white text-black rounded-xl hover:bg-zinc-200 transition"
-        >
+        <button className="w-full flex items-center justify-center space-x-3 px-4 py-2 bg-white text-black rounded-xl hover:bg-zinc-200 transition">
           <FontAwesomeIcon icon={["fab", "google"]} className="text-xl" />
           <span>Continue with Google</span>
         </button>

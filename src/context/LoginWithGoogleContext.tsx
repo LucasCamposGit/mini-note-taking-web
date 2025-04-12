@@ -4,7 +4,7 @@ interface GoogleLoginProviderProps {
   children: React.ReactNode;
 }
 
-export default function GoogleLoginProvider({ children }: GoogleLoginProviderProps) {
+export default function LoginWithGoogleProvider({ children }: GoogleLoginProviderProps) {
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
       {children}
