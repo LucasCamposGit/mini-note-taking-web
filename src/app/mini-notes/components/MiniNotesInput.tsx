@@ -27,7 +27,9 @@ function reducer(state: State, action: DispatchAction): State {
   }
 }
 
-function handleSubmit(event: React.MouseEvent) {}
+function handleSubmit(event: React.MouseEvent) {
+  
+}
 
 const baseState: State = {
   value: "",

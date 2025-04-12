@@ -76,7 +76,7 @@ const useFetch = () => {
         });
         router.push("/");
       } else if (response.status === 402) {
-        router.push("/dashboard");
+        router.push("/");
       } else if (response.status === 404) {
         router.push("/404");
       } else if (!response.ok) {
