@@ -1,6 +1,6 @@
 import useFetch from "@/hooks/useFetch";
 import React, { Dispatch, useContext, useEffect, useReducer, useRef } from "react";
-import { ACTION, Action, Note } from "../page";
+import { ACTION, Action, Note } from "../types";
 import MiniNotesContext from "./MiniNotesContext";
 
 interface MiniNotesInputProps {

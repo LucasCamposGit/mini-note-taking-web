@@ -1,5 +1,3 @@
-import { Note } from "../../page";
-
 // Action types
 export enum CARD_ACTION {
   SET_REPLYING_TO = "set_replying_to",

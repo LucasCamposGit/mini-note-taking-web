@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import { Note } from "../../page";
+import { Note } from "../../types";
 import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION } from "./MiniNotesCardReducer";

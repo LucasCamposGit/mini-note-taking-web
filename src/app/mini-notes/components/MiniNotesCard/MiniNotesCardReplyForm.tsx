@@ -3,7 +3,7 @@ import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION } from "./MiniNotesCardReducer";
 import useFetch from "@/hooks/useFetch";
-import { ACTION } from "../../page";
+import { ACTION } from "../../types";
 
 interface MiniNotesCardReplyFormProps {
   noteId: number;

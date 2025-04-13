@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { Dispatch } from "react";
-import { Action } from "../../page";
+import { Action } from "../../types";
 import { CardAction, CardState } from "./MiniNotesCardReducer";
 
 // Combine both state and card dispatch in a single context

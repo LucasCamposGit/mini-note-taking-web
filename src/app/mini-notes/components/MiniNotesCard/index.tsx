@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import { Dispatch } from "react";
-import { Action, Note } from "../../page";
+import { Action, Note } from "../../types";
 import { useMiniNotesContext } from "../MiniNotesContext";
 import { MiniNotesCardProvider } from "./MiniNotesCardContext";
 import { MiniNotesCardNote } from "./MiniNotesCardNote";

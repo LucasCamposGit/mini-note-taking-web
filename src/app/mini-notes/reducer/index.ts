@@ -1,4 +1,4 @@
-import { Action, ACTION, State } from "../page";
+import { Action, ACTION, State } from "../types";
 
 export function reducer(state: State, action: Action): State {
     switch (action.type) {
