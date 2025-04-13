@@ -1,3 +1,4 @@
+import useFetch from "@/hooks/useFetch";
 import React, { useEffect, useReducer, useRef } from "react";
 
 enum ACTION {
@@ -22,12 +23,16 @@ function reducer(state: State, action: DispatchAction): State {
         value: action.payload,
       };
 
+    case ACTION.SUBMIT_NOTE:
+      return {
+        ...state,
+        value: "",
+      };
+
     default:
       return state;
   }
 }
-
-function handleSubmit(event: React.MouseEvent) {}
 
 const baseState: State = {
   value: "",
@@ -36,9 +41,23 @@ const baseState: State = {
 export default function MiniNotesInput() {
   const [state, dispatch] = useReducer(reducer, baseState);
   const placeholderRef = useRef<HTMLDivElement>(null);
+  const { fetchData } = useFetch();
 
   function handleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     dispatch({ type: ACTION.TYPING, payload: event.target.value });
+  }
+
+  async function handleSubmit(event: React.MouseEvent) {
+    event.preventDefault();
+    if (!state.value.trim()) return;
+
+    try {
+      await fetchData("/api/notes", "POST", { text: state.value });
+      dispatch({ type: ACTION.SUBMIT_NOTE, payload: "" });
+    } catch (err) {
+      console.error("Error posting note:", err);
+    } finally {
+    }
   }
 
   useEffect(() => {
