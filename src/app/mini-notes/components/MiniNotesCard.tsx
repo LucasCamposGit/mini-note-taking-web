@@ -18,7 +18,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  
+
   const repliesRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const buttonTextRefs = useRef<{ [key: number]: HTMLSpanElement | null }>({});
   const replyFormRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -48,7 +48,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
       e.preventDefault();
       toggleReplyForm(null);
     }
-    
+
     // Handle Ctrl+Enter or Cmd+Enter to submit
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
@@ -60,46 +60,46 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
 
   const submitReply = async (parentId: number) => {
     if (!replyText.trim()) return;
-    
+
     const statusRef = replyStatusRefs.current[parentId];
     const buttonRef = replyButtonRefs.current[parentId];
     const repliesContainer = repliesRefs.current[parentId];
-    
+
     if (buttonRef) {
       buttonRef.disabled = true;
       buttonRef.textContent = "Submitting...";
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetchData("/api/notes", "POST", {
         text: replyText,
         parent_id: parentId
       });
-      
+
       // Add the new reply to the state
       if (response) {
         dispatch({
           type: ACTION.ADD_REPLY,
           payload: response
         });
-        
+
         // Immediately hide the reply form
         setReplyingTo(null);
         setReplyText("");
-        
+
         // Make sure replies are expanded and visible for this note
         setExpandedNotes(prev => ({
           ...prev,
           [parentId]: true
         }));
-        
+
         // Show replies container immediately
         if (repliesContainer) {
           repliesContainer.style.display = 'block';
           repliesContainer.style.maxHeight = '1000px'; // Large enough value
-          
+
           // Update button text
           const buttonText = buttonTextRefs.current[parentId];
           if (buttonText) {
@@ -110,13 +110,13 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
           }
         }
       }
-      
+
     } catch (error) {
       if (statusRef) {
         statusRef.textContent = "Failed to submit reply. Please try again.";
         statusRef.className = "text-red-500 text-xs mt-1";
         statusRef.style.opacity = "1";
-        
+
         // Hide error message after a delay
         setTimeout(() => {
           if (statusRef) {
@@ -133,7 +133,6 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
     }
   };
 
-  // Set refs callback functions
   const setButtonTextRef = (noteId: number) => (element: HTMLSpanElement | null) => {
     buttonTextRefs.current[noteId] = element;
   };
@@ -141,23 +140,23 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
   const setRepliesRef = (noteId: number) => (element: HTMLDivElement | null) => {
     repliesRefs.current[noteId] = element;
   };
-  
+
   const setReplyFormRef = (noteId: number) => (element: HTMLDivElement | null) => {
     replyFormRefs.current[noteId] = element;
   };
-  
+
   const setReplyInputRef = (noteId: number) => (element: HTMLTextAreaElement | null) => {
     replyInputRefs.current[noteId] = element;
   };
-  
+
   const setReplyButtonRef = (noteId: number) => (element: HTMLButtonElement | null) => {
     replyButtonRefs.current[noteId] = element;
   };
-  
+
   const setReplyStatusRef = (noteId: number) => (element: HTMLDivElement | null) => {
     replyStatusRefs.current[noteId] = element;
   };
-  
+
   const setEscInstructionRef = (noteId: number) => (element: HTMLDivElement | null) => {
     escInstructionRefs.current[noteId] = element;
   };
@@ -165,16 +164,16 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
   // Reinstate and fix the useEffect for expandedNotes
   useEffect(() => {
     if (!state?.notes) return;
-    
+
     // Process all notes to update UI based on expandedNotes state
     state.notes.forEach((note) => {
       if (!note.replies?.length) return;
-      
+
       const noteId = note.id;
       const repliesContainer = repliesRefs.current[noteId];
       const buttonText = buttonTextRefs.current[noteId];
       const isExpanded = expandedNotes[noteId];
-      
+
       if (repliesContainer) {
         if (isExpanded) {
           repliesContainer.style.display = 'block';
@@ -184,11 +183,11 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
           repliesContainer.style.maxHeight = '0';
         }
       }
-      
+
       if (buttonText) {
         const repliesCount = note.replies.length;
-        buttonText.textContent = isExpanded 
-          ? `Hide ${repliesCount} ${repliesCount === 1 ? 'reply' : 'replies'}` 
+        buttonText.textContent = isExpanded
+          ? `Hide ${repliesCount} ${repliesCount === 1 ? 'reply' : 'replies'}`
           : `Show ${repliesCount} ${repliesCount === 1 ? 'reply' : 'replies'}`;
       }
     });
@@ -200,7 +199,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
     repliesRefs.current = {};
     buttonTextRefs.current = {};
   }, [state?.notes]);
-  
+
   // Effect to handle reply form visibility
   useEffect(() => {
     // Hide all reply forms first
@@ -208,17 +207,17 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
       const noteId = parseInt(noteIdStr);
       const formRef = replyFormRefs.current[noteId];
       const escInstructionRef = escInstructionRefs.current[noteId];
-      
+
       if (formRef) {
         if (replyingTo === noteId) {
           formRef.style.display = 'block';
           formRef.style.opacity = '1';
-          
+
           // Show ESC instruction
           if (escInstructionRef) {
             escInstructionRef.style.opacity = '1';
           }
-          
+
           // Focus the textarea
           const inputRef = replyInputRefs.current[noteId];
           if (inputRef) {
@@ -227,7 +226,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
         } else {
           formRef.style.display = 'none';
           formRef.style.opacity = '0';
-          
+
           // Hide ESC instruction
           if (escInstructionRef) {
             escInstructionRef.style.opacity = '0';
@@ -236,7 +235,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
       }
     });
   }, [replyingTo]);
-  
+
   // Effect to update textarea value
   useEffect(() => {
     if (replyingTo !== null) {
@@ -246,16 +245,16 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
       }
     }
   }, [replyText, replyingTo]);
-  
+
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && replyingTo !== null) {
         toggleReplyForm(null);
       }
     };
-    
+
     window.addEventListener('keydown', handleGlobalKeyDown);
-    
+
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
@@ -270,7 +269,7 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
             <div className="flex justify-between items-center max-w-xs action-icons text-sm">
               <div className="flex items-center space-x-4">
                 {/* Reply button */}
-                <button 
+                <button
                   onClick={() => toggleReplyForm(replyingTo === note.id ? null : note.id)}
                   className="flex items-center group cursor-pointer text-gray-500 hover:text-blue-400"
                 >
@@ -293,11 +292,15 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
                 placeholder="Write a reply..."
                 className="w-full bg-transparent border border-zinc-800 rounded-lg p-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                 rows={2}
+                maxLength={280}
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => handleKeyDown(e, note.id)}
               ></textarea>
               <div className="flex justify-between mt-2">
-                <div ref={setReplyStatusRef(note.id)} className="transition-opacity duration-300 opacity-0"></div>
+                <div className="flex items-center">
+                  <div ref={setReplyStatusRef(note.id)} className="transition-opacity duration-300 opacity-0 mr-3"></div>
+                  <div className="text-xs text-gray-500">{replyText.length} / 280</div>
+                </div>
                 <div className="flex items-center space-x-4">
                   <div 
                     ref={setEscInstructionRef(note.id)}
@@ -318,11 +321,11 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
             </div>
 
             {note.replies?.length > 0 && (
-              <button 
+              <button
                 onClick={() => toggleReplies(note.id)}
                 className="text-sm text-gray-500 hover:text-blue-400 mt-2 flex items-center"
               >
-                <span 
+                <span
                   ref={setButtonTextRef(note.id)}
                   className="mr-1"
                 >
@@ -337,23 +340,27 @@ export default function MiniNotesCard({ dispatch }: MiniNotesCardProps) {
           </div>
         </div>
 
-        <div 
+        <div
           ref={setRepliesRef(note.id)}
-          className="replies-container mt-2 ml-12 pl-3 transition-all overflow-hidden" 
+          className="mt-2 transition-all overflow-hidden"
           style={{ display: 'none', maxHeight: '0' }}
         >
           {note.replies && note.replies.map((reply: Note) => (
-            <div key={reply.id} className="mt-3 pb-3">
+            <div key={reply.id} className="ml-2 my-2 pl-3 border-zinc-500 border-l relative">
               <div className="flex">
                 <div className="flex-grow">
-                  <p className="text-white text-sm mt-1">
-                    {reply.text || "This is a reply to the note."}
+                  <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words">
+                    {reply.text}
                   </p>
                   <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
                 </div>
               </div>
+
+              {/* Circle at the bottom of the border */}
+              <div className="absolute left-[-0.27rem] bottom-[-0.5rem] w-2 h-2 border border-zinc-500 rounded-full bg-black"></div>
             </div>
           ))}
+
         </div>
       </div>
     </div>
