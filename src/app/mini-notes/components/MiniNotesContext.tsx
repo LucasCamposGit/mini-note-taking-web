@@ -1,8 +1,12 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import { State } from "../page";
 
-const MiniNotesContext = createContext(undefined);
+const MiniNotesContext = createContext<State>({
+  notes: null,
+  value: "",
+});
 
 export function useMiniNotesContext() {
   const context = useContext(MiniNotesContext);

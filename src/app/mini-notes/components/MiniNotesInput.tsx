@@ -1,47 +1,16 @@
 import useFetch from "@/hooks/useFetch";
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { Dispatch, useContext, useEffect, useReducer, useRef } from "react";
+import { ACTION, Action, Note } from "../page";
+import MiniNotesContext from "./MiniNotesContext";
 
-enum ACTION {
-  SUBMIT_NOTE = "submit_note",
-  TYPING = "typing",
+interface MiniNotesInputProps {
+  dispatch: Dispatch<Action>;
 }
 
-type DispatchAction = {
-  type: ACTION;
-  payload: any;
-};
-
-interface State {
-  value: string;
-}
-
-function reducer(state: State, action: DispatchAction): State {
-  switch (action.type) {
-    case ACTION.TYPING:
-      return {
-        ...state,
-        value: action.payload,
-      };
-
-    case ACTION.SUBMIT_NOTE:
-      return {
-        ...state,
-        value: "",
-      };
-
-    default:
-      return state;
-  }
-}
-
-const baseState: State = {
-  value: "",
-};
-
-export default function MiniNotesInput() {
-  const [state, dispatch] = useReducer(reducer, baseState);
+export default function MiniNotesInput({ dispatch }: MiniNotesInputProps ) {
   const placeholderRef = useRef<HTMLDivElement>(null);
   const { fetchData } = useFetch();
+  const state = useContext(MiniNotesContext);
 
   function handleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     dispatch({ type: ACTION.TYPING, payload: event.target.value });
@@ -49,14 +18,19 @@ export default function MiniNotesInput() {
 
   async function handleSubmit(event: React.MouseEvent) {
     event.preventDefault();
+
     if (!state.value.trim()) return;
 
+    let data: Note | null = null;
+
     try {
-      await fetchData("/api/notes", "POST", { text: state.value });
+      data = await fetchData("/api/notes", "POST", { text: state.value });
       dispatch({ type: ACTION.SUBMIT_NOTE, payload: "" });
     } catch (err) {
       console.error("Error posting note:", err);
     } finally {
+      console.log("datas: ", data)
+      dispatch({type: ACTION.ADD_NOTE, payload: data})
     }
   }
 
