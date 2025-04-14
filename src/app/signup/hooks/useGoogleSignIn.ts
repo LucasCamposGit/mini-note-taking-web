@@ -30,12 +30,17 @@ export default function useGoogleSignIn() {
           throw new Error("Invalid Google user");
         }
 
-        // 👉 Step 2: Send verified Google email to your backend
+        // 👉 Step 2: Send verified Google user info to your backend
         const data = await fetchData(
           "/api/google-login",
           "POST",
           {
-            token: profile.email, // You can send more data if needed
+            // Send more complete user information
+            email: profile.email,
+            name: profile.name,
+            picture: profile.picture,
+            // Include the original Google access token for verification
+            token: tokenResponse.access_token,
           },
           false
         );
@@ -60,7 +65,7 @@ export default function useGoogleSignIn() {
       setError("Failed to sign in with Google. Please try again.");
       setIsLoading(false);
     },
-    flow: "implicit", // This line is optional but good to explicitly set
+    flow: "implicit",
   });
 
   return { login, isLoading, error };
