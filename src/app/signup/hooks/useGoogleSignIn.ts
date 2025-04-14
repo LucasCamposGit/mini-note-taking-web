@@ -17,13 +17,30 @@ export default function useGoogleSignIn() {
         setIsLoading(true);
         setError(null);
 
+        // 👉 Step 1: Use access_token to get Google user profile
+        const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+          },
+        });
+
+        const profile = await userInfoRes.json();
+
+        if (!profile || !profile.email || profile.email_verified !== true) {
+          throw new Error("Invalid Google user");
+        }
+
+        // 👉 Step 2: Send verified Google email to your backend
         const data = await fetchData(
           "/api/google-login",
           "POST",
-          { token: tokenResponse.access_token },
+          {
+            token: profile.email, // You can send more data if needed
+          },
           false
         );
 
+        // 👉 Step 3: Handle backend response
         if (data?.token && data?.refresh_token) {
           localStorage.setItem("access_token", data.token);
           localStorage.setItem("refresh_token", data.refresh_token);
@@ -32,7 +49,8 @@ export default function useGoogleSignIn() {
         } else {
           throw new Error("Invalid response from server");
         }
-      } catch {
+      } catch (err) {
+        console.error("Google login error:", err);
         setError("Failed to sign in with Google. Please try again.");
       } finally {
         setIsLoading(false);
@@ -42,6 +60,7 @@ export default function useGoogleSignIn() {
       setError("Failed to sign in with Google. Please try again.");
       setIsLoading(false);
     },
+    flow: "implicit", // This line is optional but good to explicitly set
   });
 
   return { login, isLoading, error };
