@@ -35,11 +35,6 @@ export default function useGoogleSignIn() {
           "/api/google-login",
           "POST",
           {
-            // Send more complete user information
-            email: profile.email,
-            name: profile.name,
-            picture: profile.picture,
-            // Include the original Google access token for verification
             token: tokenResponse.access_token,
           },
           false
