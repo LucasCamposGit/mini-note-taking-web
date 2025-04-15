@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
 import { State } from "./types";
+import { initialCardState } from "./reducer";
 
 
-export const CardContext = createContext< | null>(null);
+export const CardContext = createContext<State>(initialCardState);
 
 interface MiniNotesCardProviderProps {
   state: State;

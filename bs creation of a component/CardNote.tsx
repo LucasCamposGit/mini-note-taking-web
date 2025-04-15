@@ -8,7 +8,7 @@ interface MiniNotesCardNoteProps {
   note: Note;
 }
 
-export const MiniNotesCardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
+export const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
   const { replyingTo, cardDispatch } = useMiniNotesCard();
 
   const toggleReplyForm = () => {

@@ -5,11 +5,11 @@ import { CARD_ACTION } from "./MiniNotesCardReducer";
 import useFetch from "@/hooks/useFetch";
 import { ACTION } from "../../types";
 
-interface MiniNotesCardReplyFormProps {
+interface CardReplyFormProps {
   noteId: number;
 }
 
-export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ noteId }) => {
+export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
   const { 
     replyingTo, 
     replyText, 
@@ -118,7 +118,7 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
         onChange={(e) => setReplyText(e.target.value)}
         onKeyDown={handleKeyDown}
         value={replyingTo === noteId ? replyText : ""}
-      ></textarea>
+      />
       <div className="flex justify-between mt-2">
         <div className="flex items-center">
           <div ref={setters.setReplyStatusRef(noteId)} className="transition-opacity duration-300 opacity-0 mr-3"></div>

@@ -6,11 +6,11 @@ import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION } from "./MiniNotesCardReducer";
 
-interface MiniNotesCardRepliesProps {
+interface CardRepliesProps {
   note: Note;
 }
 
-export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note }) => {
+export const ardReplies: React.FC<CardRepliesProps> = ({ note }) => {
   const { expandedNotes, cardDispatch } = useMiniNotesCard();
   const { setters, refs } = useRefs();
 
