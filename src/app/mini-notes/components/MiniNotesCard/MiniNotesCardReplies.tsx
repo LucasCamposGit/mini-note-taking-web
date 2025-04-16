@@ -6,16 +6,29 @@ import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION } from "./MiniNotesCardReducer";
 
+/**
+ * Props for the MiniNotesCardReplies component.
+ */
 interface MiniNotesCardRepliesProps {
   note: Note;
 }
 
+/**
+ * Component for rendering the replies of a note.
+ * It handles the display and toggling of replies.
+ *
+ * @param {MiniNotesCardRepliesProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered replies component.
+ */
 export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note }) => {
   const { expandedNotes, cardDispatch } = useMiniNotesCard();
   const { setters, refs } = useRefs();
 
   const isExpanded = expandedNotes[note.id];
   
+  /**
+   * Toggles the visibility of the replies for a note.
+   */
   const toggleReplies = () => {
     cardDispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
@@ -23,7 +36,9 @@ export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note
     });
   };
   
-  // Update UI based on expandedNotes state
+  /**
+   * Updates the UI based on the expanded state of replies.
+   */
   useEffect(() => {
     const repliesContainer = refs.repliesRefs[note.id];
     const buttonText = refs.buttonTextRefs[note.id];
@@ -46,6 +61,9 @@ export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note
     }
   }, [isExpanded, note.replies.length, note.id, refs.repliesRefs, refs.buttonTextRefs]);
 
+  /**
+   * Renders the replies and toggle button.
+   */
   return (
     <>
       <button

@@ -4,13 +4,26 @@ import { Note } from "../../types";
 import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { CARD_ACTION } from "./MiniNotesCardReducer";
 
+/**
+ * Props for the MiniNotesCardNote component.
+ */
 interface MiniNotesCardNoteProps {
   note: Note;
 }
 
+/**
+ * Component for rendering a single note in the MiniNotesCard.
+ * It handles the display and interaction for a note.
+ *
+ * @param {MiniNotesCardNoteProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered note component.
+ */
 export const MiniNotesCardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
   const { replyingTo, cardDispatch } = useMiniNotesCard();
 
+  /**
+   * Toggles the reply form for the note.
+   */
   const toggleReplyForm = () => {
     // If we're already replying to this note, reset it
     if (replyingTo === note.id) {
@@ -26,6 +39,9 @@ export const MiniNotesCardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) =>
     }
   };
 
+  /**
+   * Renders the note with its text and action icons.
+   */
   return (
     <div className="flex flex-col">
       <div className="flex">

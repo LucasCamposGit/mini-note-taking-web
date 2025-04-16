@@ -1,14 +1,25 @@
 import { useEffect } from "react";
 import { NoteRefs } from "./useRefs";
 
+/**
+ * Props for the useReplyEffects hook.
+ */
 interface UseReplyEffectsProps {
   refs: NoteRefs;
   replyingTo: number | null;
   replyText: string;
 }
 
+/**
+ * Custom hook to manage UI effects for reply forms.
+ * It handles visibility, focus, and global key events for reply forms.
+ *
+ * @param {UseReplyEffectsProps} props - The props for the hook.
+ */
 export const useReplyEffects = ({ refs, replyingTo, replyText }: UseReplyEffectsProps) => {
-  // Handle reply form visibility when replyingTo changes
+  /**
+   * Effect to handle reply form visibility when replyingTo changes.
+   */
   useEffect(() => {
     // Hide all reply forms first
     Object.keys(refs.replyFormRefs || {}).forEach((noteIdStr) => {
@@ -54,7 +65,9 @@ export const useReplyEffects = ({ refs, replyingTo, replyText }: UseReplyEffects
     });
   }, [replyingTo, refs]);
 
-  // Update textarea value when replyText changes
+  /**
+   * Effect to update textarea value when replyText changes.
+   */
   useEffect(() => {
     if (replyingTo !== null) {
       const inputRef = refs.replyInputRefs[replyingTo];
@@ -64,7 +77,9 @@ export const useReplyEffects = ({ refs, replyingTo, replyText }: UseReplyEffects
     }
   }, [replyText, replyingTo, refs]);
 
-  // Add global escape key handler for better UX
+  /**
+   * Effect to add a global escape key handler for better UX.
+   */
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && replyingTo !== null) {

@@ -5,10 +5,20 @@ import { CARD_ACTION } from "./MiniNotesCardReducer";
 import useFetch from "@/hooks/useFetch";
 import { ACTION } from "../../types";
 
+/**
+ * Props for the MiniNotesCardReplyForm component.
+ */
 interface MiniNotesCardReplyFormProps {
   noteId: number;
 }
 
+/**
+ * Component for rendering the reply form for a note.
+ * It handles the input and submission of replies.
+ *
+ * @param {MiniNotesCardReplyFormProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered reply form component.
+ */
 export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ noteId }) => {
   const { 
     replyingTo, 
@@ -21,6 +31,11 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
   const { setters } = useRefs();
   const { fetchData } = useFetch();
 
+  /**
+   * Sets the reply text in the state.
+   *
+   * @param {string} text - The text to set as the reply.
+   */
   const setReplyText = (text: string) => {
     cardDispatch({
       type: CARD_ACTION.SET_REPLY_TEXT,
@@ -49,6 +64,9 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
     }
   }, [isVisible, noteId]);
 
+  /**
+   * Submits the reply to the server and updates the state.
+   */
   const submitReply = useCallback(async () => {
     if (!replyText.trim()) return;
 
@@ -85,6 +103,11 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
     }
   }, [replyText, noteId, dispatch, cardDispatch, fetchData]);
 
+  /**
+   * Handles keydown events for the reply form.
+   *
+   * @param {React.KeyboardEvent} e - The keyboard event.
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     // Handle Escape key to cancel reply
     if (e.key === 'Escape') {

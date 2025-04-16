@@ -4,10 +4,20 @@ import { useRefs } from "./hooks/useRefs";
 import { useReplyEffects } from "./hooks/useReplyEffects";
 import { CARD_ACTION } from "./MiniNotesCardReducer";
 
+/**
+ * Props for the MiniNotesCardProviderComponent.
+ */
 interface MiniNotesCardProviderComponentProps {
   children: React.ReactNode;
 }
 
+/**
+ * Component for providing context and managing effects for MiniNotesCard.
+ * It handles global key events and cleans up refs.
+ *
+ * @param {MiniNotesCardProviderComponentProps} props - The props for the component.
+ * @returns {JSX.Element} The provider component with children.
+ */
 export const MiniNotesCardProviderComponent: React.FC<MiniNotesCardProviderComponentProps> = ({ 
   children 
 }) => {
@@ -17,7 +27,9 @@ export const MiniNotesCardProviderComponent: React.FC<MiniNotesCardProviderCompo
   // Apply all UI effects
   useReplyEffects({ refs, replyingTo, replyText });
   
-  // Add global escape key handler to ensure we can always cancel
+  /**
+   * Effect to add a global escape key handler.
+   */
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && replyingTo !== null) {
@@ -33,7 +45,9 @@ export const MiniNotesCardProviderComponent: React.FC<MiniNotesCardProviderCompo
     };
   }, [replyingTo, cardDispatch]);
   
-  // Clean up refs when component changes
+  /**
+   * Effect to clean up refs when the component unmounts.
+   */
   useEffect(() => {
     return () => {
       // This effectively cleans up all refs on unmount
@@ -49,5 +63,8 @@ export const MiniNotesCardProviderComponent: React.FC<MiniNotesCardProviderCompo
     };
   }, [refs]);
 
+  /**
+   * Renders the provider component with its children.
+   */
   return <>{children}</>;
 }; 

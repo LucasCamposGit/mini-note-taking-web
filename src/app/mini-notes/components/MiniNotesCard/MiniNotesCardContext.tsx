@@ -1,23 +1,37 @@
 import React, { createContext, useContext } from "react";
 import { Dispatch } from "react";
-import { Action } from "../../types";
+import { NoteAction } from "../../types";
 import { CardAction, CardState } from "./MiniNotesCardReducer";
 
-// Combine both state and card dispatch in a single context
+/**
+ * Context type combining card state and dispatch functions.
+ */
 interface MiniNotesCardContextType extends CardState {
   cardDispatch: React.Dispatch<CardAction>;
-  dispatch: Dispatch<Action>; // App-level dispatch from props
+  dispatch: Dispatch<NoteAction>; // App-level dispatch from props
 }
 
+/**
+ * Context for managing the state and actions of MiniNotesCard.
+ */
 export const MiniNotesCardContext = createContext<MiniNotesCardContextType | null>(null);
 
+/**
+ * Props for the MiniNotesCardProvider component.
+ */
 interface MiniNotesCardProviderProps {
   children: React.ReactNode;
   state: CardState;
   cardDispatch: React.Dispatch<CardAction>;
-  dispatch: Dispatch<Action>; // App-level dispatch
+  dispatch: Dispatch<NoteAction>; // App-level dispatch
 }
 
+/**
+ * Provider component for MiniNotesCard context.
+ *
+ * @param {MiniNotesCardProviderProps} props - The props for the provider.
+ * @returns {JSX.Element} The provider component with context value.
+ */
 export const MiniNotesCardProvider: React.FC<MiniNotesCardProviderProps> = ({ 
   children, 
   state,
@@ -31,6 +45,9 @@ export const MiniNotesCardProvider: React.FC<MiniNotesCardProviderProps> = ({
     dispatch
   };
 
+  /**
+   * Renders the provider with the given context value.
+   */
   return (
     <MiniNotesCardContext.Provider value={value}>
       {children}
@@ -38,6 +55,12 @@ export const MiniNotesCardProvider: React.FC<MiniNotesCardProviderProps> = ({
   );
 };
 
+/**
+ * Custom hook to use the MiniNotesCard context.
+ *
+ * @returns {MiniNotesCardContextType} The current context value.
+ * @throws Will throw an error if the context is used outside of its provider.
+ */
 export const useMiniNotesCard = () => {
   const context = useContext(MiniNotesCardContext);
   if (!context) {
