@@ -1,34 +1,29 @@
 "use client";
 
-import { createContext, useContext } from "react";
-import { State } from "../types";
+import { createContext, useContext, Dispatch } from "react";
+import { RootState, RootAction } from "@/reducers/rootReducer";
+import { initialMiniNotesState } from "@/reducers/miniNotesReducer";
+import { initialCardState } from "@/reducers/cardReducer";
 
-/**
- * Initial state for the MiniNotes context.
- * @type {State}
- */
-const initialState: State = {
-  notes: null,
-  value: "",
-  ui: {
-    isEditing: false,
-    isReplying: false,
-    activeNoteId: null,
-    isSubmitting: false
-  }
+// Define context type with state and dispatch
+interface MiniNotesContextType {
+  state: RootState;
+  dispatch: Dispatch<RootAction> | null;
+}
+
+const initialState: RootState = {
+  card: initialCardState,
+  miniNotes: initialMiniNotesState
 };
 
-/**
- * Context for managing the state of MiniNotes.
- */
-const MiniNotesContext = createContext<State>(initialState);
+// Initialize context with null dispatch
+const initialContextValue: MiniNotesContextType = {
+  state: initialState,
+  dispatch: null
+};
 
-/**
- * Hook to use the MiniNotes context.
- *
- * @returns {State} The current state from the context.
- * @throws Will throw an error if the context is used outside of its provider.
- */
+const MiniNotesContext = createContext<MiniNotesContextType>(initialContextValue);
+
 export function useMiniNotesContext() {
   const context = useContext(MiniNotesContext);
   if (!context) {

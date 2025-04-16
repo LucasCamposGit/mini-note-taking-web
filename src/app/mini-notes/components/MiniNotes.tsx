@@ -1,31 +1,27 @@
 "use client";
 
+import { Dispatch } from "react";
+import { MiniNotesState } from "@/types/state";
 import MiniNotesCard from "./MiniNotesCard";
 import MiniNotesContext from "./MiniNotesContext";
 import MiniNotesInput from "./MiniNotesInput";
 import MiniNotesTitle from "./MiniNotesTitle";
-import { State } from "../types";
+import { RootAction, RootState } from "@/reducers/rootReducer";
 
-/**
- * Props for the MiniNotes component.
- */
 interface MiniNotesProps {
-  state: State;
+  state: RootState;
   title: React.ReactNode;
   input: React.ReactNode;
   notes: React.ReactNode;
+  dispatch: Dispatch<RootAction>;
 }
 
-/**
- * Component for rendering the Mini Notes application.
- * It provides the context and layout for the notes, input, and title.
- *
- * @param {MiniNotesProps} props - The props for the component.
- * @returns {JSX.Element} The rendered component.
- */
-function MiniNotes({ state, title, input, notes }: MiniNotesProps) {
+function MiniNotes({ state, title, input, notes, dispatch }: MiniNotesProps) {
   return (
-    <MiniNotesContext.Provider value={state}>
+    <MiniNotesContext.Provider value={{ 
+      state, 
+      dispatch 
+    }}>
       <main className="min-h-screen p-4 md:p-6">
         <div className="max-w-xl mx-auto">
           {title}
@@ -37,9 +33,6 @@ function MiniNotes({ state, title, input, notes }: MiniNotesProps) {
   );
 }
 
-/**
- * Renders the MiniNotes component with the provided context and children.
- */
 MiniNotes.Title = MiniNotesTitle;
 MiniNotes.Input = MiniNotesInput;
 MiniNotes.Card = MiniNotesCard;

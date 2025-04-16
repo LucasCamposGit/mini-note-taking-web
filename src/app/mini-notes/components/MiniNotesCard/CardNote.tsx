@@ -1,47 +1,34 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Note } from "../../types";
-import { useMiniNotesCard } from "./MiniNotesCardContext";
-import { CARD_ACTION } from "./MiniNotesCardReducer";
+import { Note } from "@/types/note";
+import { CARD_ACTION } from "@/types/action";
+import { useMiniNotesContext } from "../MiniNotesContext";
 
-/**
- * Props for the MiniNotesCardNote component.
- */
 interface MiniNotesCardNoteProps {
   note: Note;
 }
 
-/**
- * Component for rendering a single note in the MiniNotesCard.
- * It handles the display and interaction for a note.
- *
- * @param {MiniNotesCardNoteProps} props - The props for the component.
- * @returns {JSX.Element} The rendered note component.
- */
-export const MiniNotesCardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
-  const { replyingTo, cardDispatch } = useMiniNotesCard();
+export const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
+  const { state, dispatch } = useMiniNotesContext();
+  const replyingTo = state.card.replyingTo;
 
-  /**
-   * Toggles the reply form for the note.
-   */
   const toggleReplyForm = () => {
+    if (!dispatch) return;
+    
     // If we're already replying to this note, reset it
     if (replyingTo === note.id) {
-      cardDispatch({
+      dispatch({
         type: CARD_ACTION.RESET_REPLY
       });
     } else {
       // Otherwise set this note as the one we're replying to
-      cardDispatch({
+      dispatch({
         type: CARD_ACTION.SET_REPLYING_TO,
         payload: note.id
       });
     }
   };
 
-  /**
-   * Renders the note with its text and action icons.
-   */
   return (
     <div className="flex flex-col">
       <div className="flex">

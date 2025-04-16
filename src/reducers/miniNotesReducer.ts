@@ -1,35 +1,41 @@
-import { NoteAction, ACTION, State } from "../types";
+import { MINI_NOTES_ACTION, MiniNotesAction } from "@/types/action";
+import { MiniNotesState } from "@/types/state";
 
-/**
- * Reducer function to manage the state of the application.
- *
- * @param {State} state - The current state of the application.
- * @param {NoteAction} action - The action to be processed.
- * @returns {State} The new state after the action is applied.
- */
-export function reducer(state: State, action: NoteAction): State {
+export const initialMiniNotesState: MiniNotesState = {
+  notes: null,
+  value: "",
+  ui: {
+    isEditing: false,
+    isReplying: false,
+    activeNoteId: null,
+    isSubmitting: false
+  }
+};
+
+
+export function miniNotesReducer(state: MiniNotesState, action: MiniNotesAction): MiniNotesState {
     switch (action.type) {
-      case ACTION.LOAD_DATA:
+      case MINI_NOTES_ACTION.LOAD_DATA:
         return {
           ...state,
           notes: action.payload,
         };
-      case ACTION.TYPING:
+      case MINI_NOTES_ACTION.TYPING:
         return {
           ...state,
           value: action.payload,
         };
-      case ACTION.SUBMIT_NOTE:
+      case MINI_NOTES_ACTION.SUBMIT_NOTE:
         return {
           ...state,
           value: "",
         };
-      case ACTION.ADD_NOTE:
+      case MINI_NOTES_ACTION.ADD_NOTE:
         return {
           ...state,
           notes: [action.payload, ...(state.notes || [])],
         }
-      case ACTION.ADD_REPLY: 
+      case MINI_NOTES_ACTION.ADD_REPLY: 
         return {
           ...state,
           notes: state.notes ? state.notes.map(note => 
@@ -41,7 +47,7 @@ export function reducer(state: State, action: NoteAction): State {
               : note
           ) : []
         }
-      case ACTION.SET_EDITING:
+      case MINI_NOTES_ACTION.SET_EDITING:
         return {
           ...state,
           ui: {
@@ -49,7 +55,7 @@ export function reducer(state: State, action: NoteAction): State {
             isEditing: action.payload
           }
         }
-      case ACTION.SET_REPLYING:
+      case MINI_NOTES_ACTION.SET_REPLYING:
         return {
           ...state,
           ui: {
@@ -57,7 +63,7 @@ export function reducer(state: State, action: NoteAction): State {
             isReplying: action.payload
           }
         }
-      case ACTION.SET_ACTIVE_NOTE:
+      case MINI_NOTES_ACTION.SET_ACTIVE_NOTE:
         return {
           ...state,
           ui: {
@@ -65,7 +71,7 @@ export function reducer(state: State, action: NoteAction): State {
             activeNoteId: action.payload
           }
         }
-      case ACTION.SET_SUBMITTING:
+      case MINI_NOTES_ACTION.SET_SUBMITTING:
         return {
           ...state,
           ui: {

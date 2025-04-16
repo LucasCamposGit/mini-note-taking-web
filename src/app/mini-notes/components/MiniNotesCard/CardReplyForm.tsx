@@ -1,43 +1,28 @@
 import React, { useCallback, useEffect } from "react";
-import { useMiniNotesCard } from "./MiniNotesCardContext";
 import { useRefs } from "./hooks/useRefs";
-import { CARD_ACTION } from "./MiniNotesCardReducer";
 import useFetch from "@/hooks/useFetch";
-import { ACTION } from "../../types";
+import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
+import { useMiniNotesContext } from "../MiniNotesContext";
 
-/**
- * Props for the MiniNotesCardReplyForm component.
- */
-interface MiniNotesCardReplyFormProps {
+interface CardReplyFormProps {
   noteId: number;
 }
 
-/**
- * Component for rendering the reply form for a note.
- * It handles the input and submission of replies.
- *
- * @param {MiniNotesCardReplyFormProps} props - The props for the component.
- * @returns {JSX.Element} The rendered reply form component.
- */
-export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ noteId }) => {
+export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
+  const { state, dispatch } = useMiniNotesContext();
   const { 
-    replyingTo, 
-    replyText, 
-    isSubmitting, 
-    cardDispatch,
-    dispatch 
-  } = useMiniNotesCard();
-  
+    replyingTo,
+    replyText,
+    isSubmitting 
+  } = state.card;
+
   const { setters } = useRefs();
   const { fetchData } = useFetch();
 
-  /**
-   * Sets the reply text in the state.
-   *
-   * @param {string} text - The text to set as the reply.
-   */
   const setReplyText = (text: string) => {
-    cardDispatch({
+    if (!dispatch) return;
+    
+    dispatch({
       type: CARD_ACTION.SET_REPLY_TEXT,
       payload: text
     });
@@ -64,13 +49,10 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
     }
   }, [isVisible, noteId]);
 
-  /**
-   * Submits the reply to the server and updates the state.
-   */
   const submitReply = useCallback(async () => {
-    if (!replyText.trim()) return;
+    if (!replyText.trim() || !dispatch) return;
 
-    cardDispatch({
+    dispatch({
       type: CARD_ACTION.SET_SUBMITTING,
       payload: true
     });
@@ -83,12 +65,12 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
 
       if (response) {
         dispatch({
-          type: ACTION.ADD_REPLY,
+          type: MINI_NOTES_ACTION.ADD_REPLY,
           payload: response,
         });
 
         // Reset reply state
-        cardDispatch({
+        dispatch({
           type: CARD_ACTION.SET_REPLYING_TO,
           payload: null
         });
@@ -96,23 +78,20 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
     } catch (error) {
       console.error("Failed to submit reply:", error);
     } finally {
-      cardDispatch({
+      dispatch({
         type: CARD_ACTION.SET_SUBMITTING,
         payload: false
       });
     }
-  }, [replyText, noteId, dispatch, cardDispatch, fetchData]);
+  }, [replyText, noteId, dispatch, fetchData]);
 
-  /**
-   * Handles keydown events for the reply form.
-   *
-   * @param {React.KeyboardEvent} e - The keyboard event.
-   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!dispatch) return;
+    
     // Handle Escape key to cancel reply
     if (e.key === 'Escape') {
       e.preventDefault();
-      cardDispatch({
+      dispatch({
         type: CARD_ACTION.SET_REPLYING_TO,
         payload: null
       });
@@ -143,14 +122,14 @@ export const MiniNotesCardReplyForm: React.FC<MiniNotesCardReplyFormProps> = ({ 
         onChange={(e) => setReplyText(e.target.value)}
         onKeyDown={handleKeyDown}
         value={replyingTo === noteId ? replyText : ""}
-      ></textarea>
+      />
       <div className="flex justify-between mt-2">
         <div className="flex items-center">
           <div ref={setters.setReplyStatusRef(noteId)} className="transition-opacity duration-300 opacity-0 mr-3"></div>
           <div className="text-xs text-gray-500">{replyText.length} / 280</div>
         </div>
         <div className="flex items-center space-x-4">
-          <div 
+          <div
             ref={setters.setEscInstructionRef(noteId)}
             className="text-xs text-zinc-500 opacity-0 transition-opacity duration-300"
           >

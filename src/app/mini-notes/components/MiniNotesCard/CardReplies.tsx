@@ -1,48 +1,42 @@
 import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import { Note } from "../../types";
-import { useMiniNotesCard } from "./MiniNotesCardContext";
+import { Note } from "@/types/note";
 import { useRefs } from "./hooks/useRefs";
-import { CARD_ACTION } from "./MiniNotesCardReducer";
+import { CARD_ACTION } from "@/types/action";
+import { useMiniNotesContext } from "../MiniNotesContext";
 
-/**
- * Props for the MiniNotesCardReplies component.
- */
-interface MiniNotesCardRepliesProps {
+interface CardRepliesProps {
   note: Note;
 }
 
-/**
- * Component for rendering the replies of a note.
- * It handles the display and toggling of replies.
- *
- * @param {MiniNotesCardRepliesProps} props - The props for the component.
- * @returns {JSX.Element} The rendered replies component.
- */
-export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note }) => {
-  const { expandedNotes, cardDispatch } = useMiniNotesCard();
+export const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
+
+  const { state, dispatch } = useMiniNotesContext();
+  const { expandedNotes } = state.card;
+
   const { setters, refs } = useRefs();
 
   const isExpanded = expandedNotes[note.id];
-  
-  /**
-   * Toggles the visibility of the replies for a note.
-   */
+
+  if (!note.replies || note.replies.length == 0) return null;
+
   const toggleReplies = () => {
-    cardDispatch({
+    if (!dispatch) return;
+
+    dispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
       payload: note.id
     });
   };
-  
-  /**
-   * Updates the UI based on the expanded state of replies.
-   */
+
+
+
+  // Update UI based on expandedNotes state
   useEffect(() => {
     const repliesContainer = refs.repliesRefs[note.id];
     const buttonText = refs.buttonTextRefs[note.id];
-    
+
     if (repliesContainer) {
       if (isExpanded) {
         repliesContainer.style.display = 'block';
@@ -61,9 +55,6 @@ export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note
     }
   }, [isExpanded, note.replies.length, note.id, refs.repliesRefs, refs.buttonTextRefs]);
 
-  /**
-   * Renders the replies and toggle button.
-   */
   return (
     <>
       <button
@@ -81,7 +72,7 @@ export const MiniNotesCardReplies: React.FC<MiniNotesCardRepliesProps> = ({ note
           className="w-3"
         />
       </button>
-      
+
       <div
         ref={setters.setRepliesRef(note.id)}
         className="mt-2 transition-all overflow-hidden"
