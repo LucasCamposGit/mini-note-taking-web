@@ -34,7 +34,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold">$2/month</h2>
             <p className="text-sm text-zinc-400 mt-2">Write up to 560 characters per note.</p>
             <p className="text-sm text-zinc-400">Support the movement. Think deeper.</p>
-            <Link href="/signup">
+            <Link href="/payment">
               <span className="inline-block mt-4 px-4 py-2 text-sm bg-white text-black rounded-xl hover:bg-zinc-200">
                 Upgrade Now
               </span>
