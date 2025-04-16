@@ -13,7 +13,7 @@ export default function PaymentCancelPage() {
         </div>
         <h1 className="text-2xl font-bold mb-4">Payment Cancelled</h1>
         <p className="text-zinc-300 mb-6">Your payment process was cancelled. No charges were made.</p>
-        <p className="text-zinc-400 mb-6">You can continue using the free plan or try upgrading again when you're ready.</p>
+        <p className="text-zinc-400 mb-6">You can continue using the free plan or try upgrading again when you&apos;re ready.</p>
         <div className="grid grid-cols-2 gap-4">
           <Link href="/payment">
             <span className="inline-block w-full px-4 py-2 bg-zinc-700 text-white rounded-xl hover:bg-zinc-600">

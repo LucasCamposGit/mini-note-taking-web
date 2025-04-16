@@ -23,7 +23,7 @@ export default function MiniNotesPage() {
   useEffect(() => {
     fetchData("/api/notes/tree", "GET");
 
-  }, []);
+  }, [fetchData]);
 
   /**
    * Effect to dispatch an action when data is fetched.
@@ -37,7 +37,7 @@ export default function MiniNotesPage() {
       });
     }
     console.log("state", state)
-  }, [data]);
+  }, [data, state]);
 
 
   return (
