@@ -12,7 +12,9 @@ export default function MiniNotesCard() {
           <div key={note.id} className="note-card p-4 my-2 rounded-xl">
             <Card.Note note={note} />
             <Card.ReplyForm noteId={note.id} />
-            <Card.Replies note={note} />
+            {note.replies && note.replies.length > 0 &&
+              <Card.Replies note={note} />
+            }
           </div>
         );
       })}

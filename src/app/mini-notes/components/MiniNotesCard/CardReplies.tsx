@@ -19,18 +19,16 @@ export const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
 
   const isExpanded = expandedNotes[note.id];
 
-  if (!note.replies || note.replies.length == 0) return null;
-
+  
   const toggleReplies = () => {
     if (!dispatch) return;
-
+    
     dispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
       payload: note.id
     });
   };
-
-
+  
 
   // Update UI based on expandedNotes state
   useEffect(() => {
