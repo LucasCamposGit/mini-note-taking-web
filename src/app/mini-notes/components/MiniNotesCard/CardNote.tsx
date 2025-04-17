@@ -1,5 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { Note } from "@/types/note";
 import { CARD_ACTION } from "@/types/action";
 import { useMiniNotesContext } from "../MiniNotesContext";
@@ -42,7 +43,7 @@ export const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
                 className="flex items-center group cursor-pointer text-gray-500 hover:text-blue-400"
               >
                 <FontAwesomeIcon
-                  icon={["far", "comment"]}
+                  icon={faComment}
                   className="mr-2 w-3 group-hover:text-blue-400"
                 />
                 <span className={`group-hover:text-blue-400 ${replyingTo === note.id ? 'text-blue-400' : ''}`}>
