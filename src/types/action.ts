@@ -10,7 +10,8 @@ export enum MINI_NOTES_ACTION {
     SET_EDITING = "set_editing",
     SET_REPLYING = "set_replying",
     SET_ACTIVE_NOTE = "set_active_note",
-    SET_SUBMITTING = "set_submitting"
+    SET_SUBMITTING = "set_submitting",
+    DELETE_NOTE = "delete_note"
 }
 
 export type MiniNotesAction =
@@ -22,7 +23,8 @@ export type MiniNotesAction =
     | { type: MINI_NOTES_ACTION.SET_EDITING; payload: boolean }
     | { type: MINI_NOTES_ACTION.SET_REPLYING; payload: boolean }
     | { type: MINI_NOTES_ACTION.SET_ACTIVE_NOTE; payload: number | null }
-    | { type: MINI_NOTES_ACTION.SET_SUBMITTING; payload: boolean }; 
+    | { type: MINI_NOTES_ACTION.SET_SUBMITTING; payload: boolean }
+    | { type: MINI_NOTES_ACTION.DELETE_NOTE; payload: number }; 
 
 
 // card component from mini notes page
@@ -30,7 +32,7 @@ export enum CARD_ACTION {
     SET_REPLYING_TO = "set_replying_to",
     SET_REPLY_TEXT = "set_reply_text",
     TOGGLE_REPLIES = "toggle_replies",
-    SET_SUBMITTING = "set_submitting",
+    SET_SUBMITTING_REPLY = "set_submitting_reply",
     RESET_REPLY = "reset_reply",
   }
   
@@ -39,5 +41,5 @@ export type CardAction =
   | { type: CARD_ACTION.SET_REPLYING_TO; payload: number | null }
   | { type: CARD_ACTION.SET_REPLY_TEXT; payload: string }
   | { type: CARD_ACTION.TOGGLE_REPLIES; payload: number }
-  | { type: CARD_ACTION.SET_SUBMITTING; payload: boolean }
+  | { type: CARD_ACTION.SET_SUBMITTING_REPLY; payload: boolean }
   | { type: CARD_ACTION.RESET_REPLY };

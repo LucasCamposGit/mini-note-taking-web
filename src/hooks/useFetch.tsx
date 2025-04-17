@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   LOGIN_CONTEXT_ACTIONS,
   useLogin,
@@ -17,7 +17,8 @@ const useFetch = () => {
   const [response, setResponse] = useState<Response | null>(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const fetchData = async (
+  // Memoize fetchData to prevent recreation on each render
+  const fetchData = useCallback(async (
     path: string,
     method: string,
     body: any | null = null,
@@ -96,10 +97,19 @@ const useFetch = () => {
     } catch (err) {
       const message = (err as Error).message || "Erro ao buscar os dados.";
       setError(message);
+      return null;
     }
-  };
+  }, [apiUrl, token, loginDispatch, router]);
 
-  return { fetchData, data, error, response };
+  // Memoize the return value to prevent unnecessary re-renders
+  const returnValue = useMemo(() => ({
+    fetchData,
+    data,
+    error,
+    response
+  }), [fetchData, data, error, response]);
+
+  return returnValue;
 };
 
 const fetchRefreshToken = async (refresh_token: string, apiUrl: string) => {

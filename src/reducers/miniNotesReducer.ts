@@ -1,5 +1,6 @@
 import { MINI_NOTES_ACTION, MiniNotesAction } from "@/types/action";
 import { MiniNotesState } from "@/types/state";
+import { Note } from "@/types/note";
 
 export const initialMiniNotesState: MiniNotesState = {
   notes: null,
@@ -78,6 +79,27 @@ export function miniNotesReducer(state: MiniNotesState, action: MiniNotesAction)
             ...state.ui,
             isSubmitting: action.payload
           }
+        }
+      case MINI_NOTES_ACTION.DELETE_NOTE:
+        return {
+          ...state,
+          notes: state.notes ? state.notes.map(note => {
+            if (note.id === action.payload) {
+              return null;
+            }
+            
+            if (note.replies && note.replies.length > 0) {
+              const updatedReplies = note.replies.filter(reply => reply.id !== action.payload);
+              if (updatedReplies.length !== note.replies.length) {
+                return {
+                  ...note,
+                  replies: updatedReplies
+                };
+              }
+            }
+            
+            return note;
+          }).filter(Boolean) as Note[] : []
         }
       default:
         return state;

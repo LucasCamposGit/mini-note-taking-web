@@ -1,49 +1,49 @@
 import useFetch from "@/hooks/useFetch";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useMiniNotesContext } from "./MiniNotesContext";
 import { MINI_NOTES_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
 
-export default function MiniNotesInput() {
+function MiniNotesInput() {
   const placeholderRef = useRef<HTMLDivElement>(null);
   const { fetchData } = useFetch();
   const { state, dispatch } = useMiniNotesContext();
   
-  function handleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    dispatch!({ type: MINI_NOTES_ACTION.TYPING, payload: event.target.value });
-  }
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (!dispatch) return;
+    dispatch({ type: MINI_NOTES_ACTION.TYPING, payload: event.target.value });
+  }, [dispatch]);
 
-  async function handleSubmit(event: React.MouseEvent) {
+  const handleSubmit = useCallback(async (event: React.MouseEvent) => {
     event.preventDefault();
-
-    if (!state.miniNotes.value.trim()) return;
+    if (!dispatch || !state.miniNotes.value.trim()) return;
 
     let data: Note | null = null;
 
     try {
-      dispatch!({ 
+      dispatch({ 
         type: MINI_NOTES_ACTION.SET_SUBMITTING, 
         payload: true 
       });
       
       data = await fetchData("/api/notes", "POST", { text: state.miniNotes.value }) as Note;
-      dispatch!({ type: MINI_NOTES_ACTION.SUBMIT_NOTE });
+      dispatch({ type: MINI_NOTES_ACTION.SUBMIT_NOTE });
     } catch (err) {
       console.error("Error posting note:", err);
     } finally {
-      dispatch!({ 
+      dispatch({ 
         type: MINI_NOTES_ACTION.SET_SUBMITTING, 
         payload: false 
       });
       
       if (data) {
-        dispatch!({
+        dispatch({
           type: MINI_NOTES_ACTION.ADD_NOTE, 
           payload: data
         });
       }
     }
-  }
+  }, [dispatch, fetchData, state.miniNotes.value]);
 
   /**
    * Effect to toggle the placeholder visibility based on input value.
@@ -96,3 +96,5 @@ export default function MiniNotesInput() {
     </div>
   );
 }
+
+export default React.memo(MiniNotesInput);

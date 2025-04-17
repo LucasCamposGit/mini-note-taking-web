@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useRefs } from "./hooks/useRefs";
 import useFetch from "@/hooks/useFetch";
 import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
@@ -8,7 +8,7 @@ interface CardReplyFormProps {
   noteId: number;
 }
 
-export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
+const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
   const { state, dispatch } = useMiniNotesContext();
   const { 
     replyingTo,
@@ -19,17 +19,17 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
   const { setters } = useRefs();
   const { fetchData } = useFetch();
 
-  const setReplyText = (text: string) => {
+  // Check if this form should be visible
+  const isVisible = replyingTo === noteId;
+
+  const setReplyText = useCallback((text: string) => {
     if (!dispatch) return;
     
     dispatch({
       type: CARD_ACTION.SET_REPLY_TEXT,
       payload: text
     });
-  };
-
-  // Check if this form should be visible
-  const isVisible = replyingTo === noteId;
+  }, [dispatch]);
 
   // Apply visibility styling directly to improve reliability
   useEffect(() => {
@@ -53,7 +53,7 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
     if (!replyText.trim() || !dispatch) return;
 
     dispatch({
-      type: CARD_ACTION.SET_SUBMITTING,
+      type: CARD_ACTION.SET_SUBMITTING_REPLY,
       payload: true
     });
 
@@ -71,21 +71,20 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
 
         // Reset reply state
         dispatch({
-          type: CARD_ACTION.SET_REPLYING_TO,
-          payload: null
+          type: CARD_ACTION.RESET_REPLY
         });
       }
     } catch (error) {
       console.error("Failed to submit reply:", error);
     } finally {
       dispatch({
-        type: CARD_ACTION.SET_SUBMITTING,
+        type: CARD_ACTION.SET_SUBMITTING_REPLY,
         payload: false
       });
     }
   }, [replyText, noteId, dispatch, fetchData]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!dispatch) return;
     
     // Handle Escape key to cancel reply
@@ -104,7 +103,12 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
         submitReply();
       }
     }
-  };
+  }, [dispatch, replyText, submitReply]);
+
+  // Memoize the textarea value to prevent unnecessary renders
+  const textareaValue = useMemo(() => {
+    return replyingTo === noteId ? replyText : "";
+  }, [replyingTo, noteId, replyText]);
 
   return (
     <div
@@ -121,7 +125,7 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
         maxLength={280}
         onChange={(e) => setReplyText(e.target.value)}
         onKeyDown={handleKeyDown}
-        value={replyingTo === noteId ? replyText : ""}
+        value={textareaValue}
       />
       <div className="flex justify-between mt-2">
         <div className="flex items-center">
@@ -147,4 +151,7 @@ export const CardReplyForm: React.FC<CardReplyFormProps> = ({ noteId }) => {
       </div>
     </div>
   );
-}; 
+};
+
+export const MemoizedCardReplyForm = React.memo(CardReplyForm);
+export { MemoizedCardReplyForm as CardReplyForm }; 

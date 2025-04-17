@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch } from "react";
+import React, { Dispatch, useMemo } from "react";
 import { MiniNotesState } from "@/types/state";
 import MiniNotesCard from "./MiniNotesCard";
 import MiniNotesContext from "./MiniNotesContext";
@@ -17,11 +17,14 @@ interface MiniNotesProps {
 }
 
 function MiniNotes({ state, title, input, notes, dispatch }: MiniNotesProps) {
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    state, 
+    dispatch 
+  }), [state, dispatch]);
+
   return (
-    <MiniNotesContext.Provider value={{ 
-      state, 
-      dispatch 
-    }}>
+    <MiniNotesContext.Provider value={contextValue}>
       <main className="min-h-screen p-4 md:p-6">
         <div className="max-w-xl mx-auto">
           {title}

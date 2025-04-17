@@ -45,7 +45,7 @@ import { CardState } from "@/types/state";
           },
         };
       
-      case CARD_ACTION.SET_SUBMITTING:
+      case CARD_ACTION.SET_SUBMITTING_REPLY:
         return {
           ...state,
           isSubmitting: action.payload,

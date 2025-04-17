@@ -1,34 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "@/types/note";
 import { useRefs } from "./hooks/useRefs";
-import { CARD_ACTION } from "@/types/action";
+import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
 import { useMiniNotesContext } from "../MiniNotesContext";
+import useFetch from "@/hooks/useFetch";
 
 interface CardRepliesProps {
   note: Note;
 }
 
-export const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
-
+const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
   const { state, dispatch } = useMiniNotesContext();
+  const { fetchData } = useFetch();
   const { expandedNotes } = state.card;
 
   const { setters, refs } = useRefs();
 
   const isExpanded = expandedNotes[note.id];
 
-  
-  const toggleReplies = () => {
+  const toggleReplies = useCallback(() => {
     if (!dispatch) return;
     
     dispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
       payload: note.id
     });
-  };
+  }, [dispatch, note.id]);
   
+  const handleDeleteReply = useCallback(async (replyId: number) => {
+    if (!dispatch) return;
+    
+    try {
+      // Call the API to delete the reply
+      await fetchData(`/api/notes/${replyId}`, "DELETE");
+      
+      // Update the state to remove the deleted reply
+      dispatch({
+        type: MINI_NOTES_ACTION.DELETE_NOTE,
+        payload: replyId
+      });
+    } catch (error) {
+      console.error("Error deleting reply:", error);
+    }
+  }, [dispatch, fetchData]);
 
   // Update UI based on expandedNotes state
   useEffect(() => {
@@ -53,6 +69,36 @@ export const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
     }
   }, [isExpanded, note.replies.length, note.id, refs.repliesRefs, refs.buttonTextRefs]);
 
+  // Memoize replies rendering to prevent unnecessary re-renders
+  const repliesContent = useMemo(() => {
+    return note.replies && note.replies.map((reply: Note) => (
+      <div key={reply.id} className="ml-2 my-2 pl-3 border-zinc-500 border-l relative">
+        <div className="flex">
+          <div className="flex-grow relative">
+            {/* Delete button for reply */}
+            <button
+              onClick={() => handleDeleteReply(reply.id)}
+              className="absolute top-0 right-0 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
+            >
+              <FontAwesomeIcon
+                icon={faTrash}
+                className="w-3 group-hover:text-red-500"
+              />
+            </button>
+            
+            <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
+              {reply.text}
+            </p>
+            <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
+          </div>
+        </div>
+
+        {/* Circle at the bottom of the border */}
+        <div className="absolute left-[-0.27rem] bottom-[-0.5rem] w-2 h-2 border border-zinc-500 rounded-full bg-black"></div>
+      </div>
+    ));
+  }, [note.replies, handleDeleteReply]);
+
   return (
     <>
       <button
@@ -76,22 +122,11 @@ export const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
         className="mt-2 transition-all overflow-hidden"
         style={{ display: 'none', maxHeight: '0' }}
       >
-        {note.replies && note.replies.map((reply: Note) => (
-          <div key={reply.id} className="ml-2 my-2 pl-3 border-zinc-500 border-l relative">
-            <div className="flex">
-              <div className="flex-grow">
-                <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words">
-                  {reply.text}
-                </p>
-                <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
-              </div>
-            </div>
-
-            {/* Circle at the bottom of the border */}
-            <div className="absolute left-[-0.27rem] bottom-[-0.5rem] w-2 h-2 border border-zinc-500 rounded-full bg-black"></div>
-          </div>
-        ))}
+        {repliesContent}
       </div>
     </>
   );
-}; 
+};
+
+export const MemoizedCardReplies = React.memo(CardReplies);
+export { MemoizedCardReplies as CardReplies }; 
