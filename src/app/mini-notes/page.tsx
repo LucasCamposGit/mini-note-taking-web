@@ -3,10 +3,11 @@
 import "@/lib/fontawesome";
 import MiniNotes from "./components/MiniNotes";
 import useFetch from "@/hooks/useFetch";
-import { useEffect, useReducer, useCallback, useMemo } from "react";
+import { useEffect, useReducer, useCallback, useMemo, Suspense } from "react";
 import { initialRootState, rootReducer } from "@/reducers/rootReducer";
 import { MINI_NOTES_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
+import Loading from "./loading";
 
 /**
  * Main component for the Mini Notes page.
@@ -16,11 +17,9 @@ import { Note } from "@/types/note";
  */
 export default function MiniNotesPage() {
   const { fetchData, data } = useFetch();
-  const [state, dispatchBase] = useReducer(rootReducer, initialRootState);
-  
-  // Memoize dispatch function to prevent unnecessary rerenders
-  const dispatch = useCallback(dispatchBase, []);
+  const [state, dispatch] = useReducer(rootReducer, initialRootState);
 
+  // Memoize dispatch function to prevent unnecessary rerenders
   /**
    * Effect to fetch data from the API when the component mounts.
    */
@@ -41,12 +40,15 @@ export default function MiniNotesPage() {
   }, [data, dispatch]);
 
   return (
-    <MiniNotes
-      state={state}
-      dispatch={dispatch}
-      title={<MiniNotes.Title />}
-      input={<MiniNotes.Input />}
-      notes={<MiniNotes.Card />}
-    />
+    <Suspense fallback={<Loading />}>
+      <MiniNotes
+        state={state}
+        dispatch={dispatch}
+        title={<MiniNotes.Title />}
+        input={<MiniNotes.Input />}
+        notes={<MiniNotes.Card />}
+      />
+    </Suspense>
+
   );
 }
