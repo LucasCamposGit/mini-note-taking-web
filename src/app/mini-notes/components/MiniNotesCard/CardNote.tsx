@@ -56,7 +56,7 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
         {/* Delete button at top right */}
         <button
           onClick={handleDeleteNote}
-          className="absolute top-0 right-0 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
+          className="absolute top-1 right-1 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
         >
           <FontAwesomeIcon
             icon={faTrash}

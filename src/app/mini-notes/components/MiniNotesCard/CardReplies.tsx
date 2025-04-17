@@ -22,20 +22,20 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
 
   const toggleReplies = useCallback(() => {
     if (!dispatch) return;
-    
+
     dispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
       payload: note.id
     });
   }, [dispatch, note.id]);
-  
+
   const handleDeleteReply = useCallback(async (replyId: number) => {
     if (!dispatch) return;
-    
+
     try {
       // Call the API to delete the reply
       await fetchData(`/api/notes/${replyId}`, "DELETE");
-      
+
       // Update the state to remove the deleted reply
       dispatch({
         type: MINI_NOTES_ACTION.DELETE_NOTE,
@@ -70,34 +70,9 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
   }, [isExpanded, note.replies.length, note.id, refs.repliesRefs, refs.buttonTextRefs]);
 
   // Memoize replies rendering to prevent unnecessary re-renders
-  const repliesContent = useMemo(() => {
-    return note.replies && note.replies.map((reply: Note) => (
-      <div key={reply.id} className="ml-2 my-2 pl-3 border-zinc-500 border-l relative">
-        <div className="flex">
-          <div className="flex-grow relative">
-            {/* Delete button for reply */}
-            <button
-              onClick={() => handleDeleteReply(reply.id)}
-              className="absolute top-0 right-0 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
-            >
-              <FontAwesomeIcon
-                icon={faTrash}
-                className="w-3 group-hover:text-red-500"
-              />
-            </button>
-            
-            <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
-              {reply.text}
-            </p>
-            <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
-          </div>
-        </div>
-
-        {/* Circle at the bottom of the border */}
-        <div className="absolute left-[-0.27rem] bottom-[-0.5rem] w-2 h-2 border border-zinc-500 rounded-full bg-black"></div>
-      </div>
-    ));
-  }, [note.replies, handleDeleteReply]);
+  // const repliesContent = useMemo(() => {
+  // return 
+  // }, [note.replies, handleDeleteReply]);
 
   return (
     <>
@@ -116,13 +91,37 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
           className="w-3"
         />
       </button>
-
       <div
         ref={setters.setRepliesRef(note.id)}
         className="mt-2 transition-all overflow-hidden"
         style={{ display: 'none', maxHeight: '0' }}
       >
-        {repliesContent}
+        {(note.replies && note.replies.map((reply: Note) => (
+          <div key={reply.id} className="ml-2 my-2 pl-3 bg-gray-900 rounded border-zinc-500 border-l relative">
+            <div className="flex">
+              <div className="flex-grow relative">
+                {/* Delete button for reply */}
+                <button
+                  onClick={() => handleDeleteReply(reply.id)}
+                  className="absolute top-1 right-1 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
+                >
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="w-3 group-hover:text-red-500"
+                  />
+                </button>
+
+                <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
+                  {reply.text}
+                </p>
+                <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
+              </div>
+            </div>
+
+            {/* Circle at the bottom of the border */}
+            <div className="absolute left-[-0.27rem] bottom-[-0.5rem] w-2 h-2 border border-zinc-500 rounded-full bg-black"></div>
+          </div>
+        )))}
       </div>
     </>
   );
