@@ -7,6 +7,8 @@ import { CardState } from "@/types/state";
     replyText: "",
     isSubmitting: false,
     expandedNotes: {},
+    editingNoteId: null,
+    editText: ""
   };
   
   // Reducer function
@@ -56,6 +58,35 @@ import { CardState } from "@/types/state";
           ...state,
           replyingTo: null,
           replyText: "",
+        };
+      
+      case CARD_ACTION.SET_EDITING_NOTE:
+        // If we're toggling the same note off, reset everything
+        if (state.editingNoteId === action.payload.noteId) {
+          return {
+            ...state,
+            editingNoteId: null,
+            editText: "",
+          };
+        }
+        // If we're switching to a new note, set the edit text to the current note text
+        return {
+          ...state,
+          editingNoteId: action.payload.noteId,
+          editText: action.payload.text,
+        };
+      
+      case CARD_ACTION.SET_EDIT_TEXT:
+        return {
+          ...state,
+          editText: action.payload,
+        };
+      
+      case CARD_ACTION.RESET_EDIT:
+        return {
+          ...state,
+          editingNoteId: null,
+          editText: "",
         };
       
       default:

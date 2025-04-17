@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronUp, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "@/types/note";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
@@ -14,7 +14,7 @@ interface CardRepliesProps {
 const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
   const { state, dispatch } = useMiniNotesContext();
   const { fetchData } = useFetch();
-  const { expandedNotes } = state.card;
+  const { expandedNotes, editingNoteId, editText } = state.card;
 
   const { setters, refs } = useRefs();
 
@@ -46,6 +46,79 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
     }
   }, [dispatch, fetchData]);
 
+  const toggleEditReply = useCallback((reply: Note) => {
+    if (!dispatch) return;
+
+    // If we're already editing this reply, reset it
+    if (editingNoteId === reply.id) {
+      dispatch({
+        type: CARD_ACTION.RESET_EDIT
+      });
+    } else {
+      // Otherwise set this reply as the one we're editing
+      dispatch({
+        type: CARD_ACTION.SET_EDITING_NOTE,
+        payload: {
+          noteId: reply.id,
+          text: reply.text
+        }
+      });
+    }
+  }, [dispatch, editingNoteId]);
+
+  const handleEditTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (!dispatch) return;
+    
+    dispatch({
+      type: CARD_ACTION.SET_EDIT_TEXT,
+      payload: e.target.value
+    });
+  }, [dispatch]);
+
+  const handleUpdateReply = useCallback(async (replyId: number) => {
+    if (!dispatch || !editText.trim()) return;
+
+    try {
+      // Call the API to update the reply
+      const updatedReply = await fetchData(`/api/notes/${replyId}`, "PATCH", { text: editText });
+      
+      if (updatedReply) {
+        // Update the state with the updated reply
+        dispatch({
+          type: MINI_NOTES_ACTION.UPDATE_NOTE,
+          payload: updatedReply
+        });
+  
+        // Reset the edit state
+        dispatch({
+          type: CARD_ACTION.RESET_EDIT
+        });
+      }
+    } catch (error) {
+      console.error("Error updating reply:", error);
+    }
+  }, [dispatch, fetchData, editText]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, replyId: number) => {
+    if (!dispatch) return;
+    
+    // Handle Escape key to cancel edit
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      dispatch({
+        type: CARD_ACTION.RESET_EDIT
+      });
+    }
+
+    // Handle Ctrl+Enter or Cmd+Enter to submit
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (editText.trim()) {
+        handleUpdateReply(replyId);
+      }
+    }
+  }, [dispatch, editText, handleUpdateReply]);
+
   // Update UI based on expandedNotes state
   useEffect(() => {
     const repliesContainer = refs.repliesRefs[note.id];
@@ -68,11 +141,6 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
         : `Show ${repliesCount} ${repliesCount === 1 ? 'reply' : 'replies'}`;
     }
   }, [isExpanded, note.replies.length, note.id, refs.repliesRefs, refs.buttonTextRefs]);
-
-  // Memoize replies rendering to prevent unnecessary re-renders
-  // const repliesContent = useMemo(() => {
-  // return 
-  // }, [note.replies, handleDeleteReply]);
 
   return (
     <>
@@ -111,10 +179,62 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
                   />
                 </button>
 
-                <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
-                  {reply.text}
-                </p>
-                <div className="flex space-x-8 mt-1 action-icons text-xs"></div>
+                {editingNoteId !== reply.id ? (
+                  <>
+                    <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
+                      {reply.text}
+                    </p>
+                    <div className="flex space-x-4 mt-1 action-icons text-xs">
+                      {/* Edit button for reply */}
+                      <button
+                        onClick={() => toggleEditReply(reply)}
+                        className="flex items-center group cursor-pointer text-gray-500 hover:text-blue-400"
+                      >
+                        <FontAwesomeIcon
+                          icon={faPencilAlt}
+                          className="mr-1 w-2 group-hover:text-blue-400"
+                        />
+                        <span className="group-hover:text-blue-400">
+                          Edit
+                        </span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-2 pr-4">
+                    <textarea
+                      value={editText}
+                      onChange={handleEditTextChange}
+                      onKeyDown={(e) => handleKeyDown(e, reply.id)}
+                      placeholder="Edit your reply..."
+                      className="w-full bg-transparent border border-zinc-700 rounded-lg p-2 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      rows={2}
+                      maxLength={280}
+                    />
+                    <div className="flex justify-between mt-2">
+                      <div className="text-xs text-gray-500">{editText.length} / 280</div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            if (dispatch) {
+                              dispatch({ type: CARD_ACTION.RESET_EDIT });
+                            }
+                          }}
+                          className="px-2 py-1 text-xs bg-gray-700 text-white rounded-lg hover:bg-gray-600"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleUpdateReply(reply.id)}
+                          className="px-2 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-500"
+                          disabled={!editText.trim()}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

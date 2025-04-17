@@ -21,4 +21,6 @@ export interface CardState {
   replyText: string;
   isSubmitting: boolean;
   expandedNotes: { [key: number]: boolean };
+  editingNoteId: number | null;
+  editText: string;
 }

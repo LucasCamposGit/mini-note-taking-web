@@ -1,4 +1,5 @@
 "use client";
+
 import "@/lib/fontawesome";
 import MiniNotes from "./components/MiniNotes";
 import useFetch from "@/hooks/useFetch";

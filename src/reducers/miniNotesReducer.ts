@@ -80,6 +80,7 @@ export function miniNotesReducer(state: MiniNotesState, action: MiniNotesAction)
             isSubmitting: action.payload
           }
         }
+  
       case MINI_NOTES_ACTION.DELETE_NOTE:
         return {
           ...state,
@@ -100,6 +101,39 @@ export function miniNotesReducer(state: MiniNotesState, action: MiniNotesAction)
             
             return note;
           }).filter(Boolean) as Note[] : []
+        }
+      case MINI_NOTES_ACTION.UPDATE_NOTE:
+        return {
+          ...state,
+          notes: state.notes ? state.notes.map(note => {
+            // If this is the note we're updating
+            if (note.id === action.payload.id) {
+              return {
+                ...note,
+                text: action.payload.text
+              };
+            }
+            
+            // Check if this note has replies that need updating
+            if (note.replies && note.replies.length > 0) {
+              const updatedReplies = note.replies.map(reply => 
+                reply.id === action.payload.id
+                  ? { ...reply, text: action.payload.text }
+                  : reply
+              );
+              
+              // If a reply was updated, return the updated note
+              if (JSON.stringify(updatedReplies) !== JSON.stringify(note.replies)) {
+                return {
+                  ...note,
+                  replies: updatedReplies
+                };
+              }
+            }
+            
+            // Otherwise return the original note
+            return note;
+          }) : []
         }
       default:
         return state;
