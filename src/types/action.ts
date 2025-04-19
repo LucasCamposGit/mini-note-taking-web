@@ -38,7 +38,8 @@ export enum CARD_ACTION {
     RESET_REPLY = "reset_reply",
     SET_EDITING_NOTE = "set_editing_note",
     SET_EDIT_TEXT = "set_edit_text",
-    RESET_EDIT = "reset_edit"
+    RESET_EDIT = "reset_edit",
+    TOGGLE_MENU = "toggle_menu"
 }
 
 export type CardAction =
@@ -49,4 +50,5 @@ export type CardAction =
     | { type: CARD_ACTION.RESET_REPLY }
     | { type: CARD_ACTION.SET_EDITING_NOTE; payload: { noteId: number | null, text: string } }
     | { type: CARD_ACTION.SET_EDIT_TEXT; payload: string }
-    | { type: CARD_ACTION.RESET_EDIT };
+    | { type: CARD_ACTION.RESET_EDIT }
+    | { type: CARD_ACTION.TOGGLE_MENU; payload: number };

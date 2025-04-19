@@ -23,4 +23,5 @@ export interface CardState {
   expandedNotes: { [key: number]: boolean };
   editingNoteId: number | null;
   editText: string;
+  activeMenuId: number | null;
 }

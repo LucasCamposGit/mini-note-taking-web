@@ -8,7 +8,8 @@ import { CardState } from "@/types/state";
     isSubmitting: false,
     expandedNotes: {},
     editingNoteId: null,
-    editText: ""
+    editText: "",
+    activeMenuId: null
   };
   
   // Reducer function
@@ -89,7 +90,14 @@ import { CardState } from "@/types/state";
           editText: "",
         };
       
+      case CARD_ACTION.TOGGLE_MENU:
+        return {
+          ...state,
+          // If clicking the same menu button, toggle it off
+          activeMenuId: state.activeMenuId === action.payload ? null : action.payload
+        };
+      
       default:
         return state;
     }
-  } 
+  }

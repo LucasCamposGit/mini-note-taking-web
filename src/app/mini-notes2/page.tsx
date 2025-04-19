@@ -46,9 +46,9 @@ export default function MiniNotesPage() {
 
           {state.miniNotes.notes?.map((note) => (
             <Card.Root key={note.id}>
-              <Card.MenuToggleBtn />
+              <Card.MenuToggleBtn noteId={note.id} />
               <Card.Note text={note.text} />
-              <Card.Menu>
+              <Card.Menu noteId={note.id}>
                 <Card.MenuOption
                   icon={faPencilAlt}
                   label="Edit"
@@ -63,8 +63,8 @@ export default function MiniNotesPage() {
               {note.replies?.map((reply) => (
                 <Card.Reply key={reply.id}>
                   <Card.ReplyNote text={reply.text} />
-                  <Card.MenuToggleBtn />
-                  <Card.Menu>
+                  <Card.MenuToggleBtn noteId={reply.id} />
+                  <Card.Menu noteId={reply.id}>
                     <Card.MenuOption
                       icon={faPencilAlt}
                       label="Edit"
