@@ -4,8 +4,8 @@ interface InputRootProps {
 
 export default function InputRoot({ children }: InputRootProps) {
   return (
-    <div className="p-4 rounded-xl border border-gray-700 mb-4">
-      <div className="flex">
+    <div className="p-5 rounded-xl border border-blue-700/30 mb-6  backdrop-blur-sm shadow-lg transition-all hover:border-blue-600/40 focus-within:border-blue-500/50">
+      <div className="flex flex-col gap-3">
         <div className="flex-grow">{children}</div>
       </div>
     </div>
