@@ -1,7 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
-import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "@/types/note";
 import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
 import { useMiniNotesContext } from "../MiniNotesContext";
@@ -9,18 +8,17 @@ import useFetch from "@/hooks/useFetch";
 
 interface MiniNotesCardNoteProps {
   note: Note;
+  menu: React.ReactNode;
 }
 
-const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
+const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note, menu }) => {
   const { state, dispatch } = useMiniNotesContext();
   const { fetchData } = useFetch();
   const replyingTo = state.card.replyingTo;
   const { editingNoteId, editText } = state.card;
   const isEditing = editingNoteId === note.id;
 
-  const toggleReplyForm = useCallback(() => {
-    if (!dispatch) return;
-    
+  const toggleReplyForm = () => {
     // If we're already replying to this note, reset it
     if (replyingTo === note.id) {
       dispatch({
@@ -33,11 +31,9 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
         payload: note.id
       });
     }
-  }, [dispatch, replyingTo, note.id]);
+  };
 
-  const toggleEditForm = useCallback(() => {
-    if (!dispatch) return;
-
+  const toggleEditForm = () => {
     // If we're already editing this note, reset it
     if (isEditing) {
       dispatch({
@@ -53,19 +49,17 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
         }
       });
     }
-  }, [dispatch, isEditing, note.id, note.text]);
+  };
 
-  const handleEditTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!dispatch) return;
-    
+  const handleEditTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch({
       type: CARD_ACTION.SET_EDIT_TEXT,
       payload: e.target.value
     });
-  }, [dispatch]);
+  };
 
-  const handleUpdateNote = useCallback(async () => {
-    if (!dispatch || !editText.trim()) return;
+  const handleUpdateNote = async () => {
+    if (!editText.trim()) return;
 
     try {
       // Call the API to update the note
@@ -86,18 +80,15 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
     } catch (error) {
       console.error("Error updating note:", error);
     }
-  }, [dispatch, fetchData, note.id, editText]);
+  };
 
-  const handleCancelEdit = useCallback(() => {
-    if (!dispatch) return;
+  const handleCancelEdit = () => {
     dispatch({
       type: CARD_ACTION.RESET_EDIT
     });
-  }, [dispatch]);
+  };
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!dispatch) return;
-    
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     // Handle Escape key to cancel edit
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -111,38 +102,15 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
         handleUpdateNote();
       }
     }
-  }, [dispatch, editText, handleCancelEdit, handleUpdateNote]);
-
-  const handleDeleteNote = useCallback(async () => {
-    if (!dispatch) return;
-    
-    try {
-      // Call the API to delete the note
-      await fetchData(`/api/notes/${note.id}`, "DELETE");
-      
-      // Update the state to remove the deleted note
-      dispatch({
-        type: MINI_NOTES_ACTION.DELETE_NOTE,
-        payload: note.id
-      });
-    } catch (error) {
-      console.error("Error deleting note:", error);
-    }
-  }, [dispatch, fetchData, note.id]);
+  };
 
   return (
     <div className="flex flex-col">
       <div className="flex flex-col relative">
-        {/* Delete button at top right */}
-        <button
-          onClick={handleDeleteNote}
-          className="absolute top-1 right-1 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
-        >
-          <FontAwesomeIcon
-            icon={faTrash}
-            className="w-3 group-hover:text-red-500"
-          />
-        </button>
+        {/* Menu at top right */}
+        <div className="absolute top-1 right-1">
+          {menu}
+        </div>
 
         {!isEditing ? (
           <div className="flex-grow">
@@ -159,20 +127,6 @@ const CardNote: React.FC<MiniNotesCardNoteProps> = ({ note }) => {
                 />
                 <span className={`group-hover:text-blue-400 ${replyingTo === note.id ? 'text-blue-400' : ''}`}>
                   {replyingTo === note.id ? 'Cancel' : 'Reply'}
-                </span>
-              </button>
-
-              {/* Edit button */}
-              <button
-                onClick={toggleEditForm}
-                className="flex items-center group cursor-pointer text-gray-500 hover:text-blue-400"
-              >
-                <FontAwesomeIcon
-                  icon={faPencilAlt}
-                  className="mr-2 w-3 group-hover:text-blue-400"
-                />
-                <span className="group-hover:text-blue-400">
-                  Edit
                 </span>
               </button>
             </div>

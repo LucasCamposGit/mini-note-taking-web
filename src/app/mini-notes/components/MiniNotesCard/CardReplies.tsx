@@ -1,17 +1,20 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronUp, faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "@/types/note";
 import { useRefs } from "./hooks/useRefs";
 import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
 import { useMiniNotesContext } from "../MiniNotesContext";
 import useFetch from "@/hooks/useFetch";
+import Card from "./Card";
+import CardMenu from "./CardMenu";
 
 interface CardRepliesProps {
   note: Note;
+  menu?: React.ReactNode;
 }
 
-const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
+const CardReplies: React.FC<CardRepliesProps> = ({ note, menu }) => {
   const { state, dispatch } = useMiniNotesContext();
   const { fetchData } = useFetch();
   const { expandedNotes, editingNoteId, editText } = state.card;
@@ -20,63 +23,24 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
 
   const isExpanded = expandedNotes[note.id];
 
-  const toggleReplies = useCallback(() => {
-    if (!dispatch) return;
+  const toggleReplies = () => {
 
     dispatch({
       type: CARD_ACTION.TOGGLE_REPLIES,
       payload: note.id
     });
-  }, [dispatch, note.id]);
+  };
 
-  const handleDeleteReply = useCallback(async (replyId: number) => {
-    if (!dispatch) return;
-
-    try {
-      // Call the API to delete the reply
-      await fetchData(`/api/notes/${replyId}`, "DELETE");
-
-      // Update the state to remove the deleted reply
-      dispatch({
-        type: MINI_NOTES_ACTION.DELETE_NOTE,
-        payload: replyId
-      });
-    } catch (error) {
-      console.error("Error deleting reply:", error);
-    }
-  }, [dispatch, fetchData]);
-
-  const toggleEditReply = useCallback((reply: Note) => {
-    if (!dispatch) return;
-
-    // If we're already editing this reply, reset it
-    if (editingNoteId === reply.id) {
-      dispatch({
-        type: CARD_ACTION.RESET_EDIT
-      });
-    } else {
-      // Otherwise set this reply as the one we're editing
-      dispatch({
-        type: CARD_ACTION.SET_EDITING_NOTE,
-        payload: {
-          noteId: reply.id,
-          text: reply.text
-        }
-      });
-    }
-  }, [dispatch, editingNoteId]);
-
-  const handleEditTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!dispatch) return;
+  const handleEditTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     
     dispatch({
       type: CARD_ACTION.SET_EDIT_TEXT,
       payload: e.target.value
     });
-  }, [dispatch]);
+  };
 
-  const handleUpdateReply = useCallback(async (replyId: number) => {
-    if (!dispatch || !editText.trim()) return;
+  const handleUpdateReply = async (replyId: number) => {
+    if (!editText.trim()) return;
 
     try {
       // Call the API to update the reply
@@ -97,10 +61,9 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
     } catch (error) {
       console.error("Error updating reply:", error);
     }
-  }, [dispatch, fetchData, editText]);
+  };
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, replyId: number) => {
-    if (!dispatch) return;
+  const handleKeyDown = (e: React.KeyboardEvent, replyId: number) => {
     
     // Handle Escape key to cancel edit
     if (e.key === 'Escape') {
@@ -117,7 +80,7 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
         handleUpdateReply(replyId);
       }
     }
-  }, [dispatch, editText, handleUpdateReply]);
+  };
 
   // Update UI based on expandedNotes state
   useEffect(() => {
@@ -168,37 +131,14 @@ const CardReplies: React.FC<CardRepliesProps> = ({ note }) => {
           <div key={reply.id} className="ml-2 my-2 pl-3 bg-gray-900 rounded border-zinc-500 border-l relative">
             <div className="flex">
               <div className="flex-grow relative">
-                {/* Delete button for reply */}
-                <button
-                  onClick={() => handleDeleteReply(reply.id)}
-                  className="absolute top-1 right-1 flex items-center group cursor-pointer text-gray-500 hover:text-red-500"
-                >
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="w-3 group-hover:text-red-500"
-                  />
-                </button>
-
+                <div className="absolute top-1 right-1">
+                  <CardMenu note={reply} />
+                </div>
                 {editingNoteId !== reply.id ? (
                   <>
                     <p className="text-white text-sm mt-1 whitespace-pre-wrap break-words pr-6">
                       {reply.text}
                     </p>
-                    <div className="flex space-x-4 mt-1 action-icons text-xs">
-                      {/* Edit button for reply */}
-                      <button
-                        onClick={() => toggleEditReply(reply)}
-                        className="flex items-center group cursor-pointer text-gray-500 hover:text-blue-400"
-                      >
-                        <FontAwesomeIcon
-                          icon={faPencilAlt}
-                          className="mr-1 w-2 group-hover:text-blue-400"
-                        />
-                        <span className="group-hover:text-blue-400">
-                          Edit
-                        </span>
-                      </button>
-                    </div>
                   </>
                 ) : (
                   <div className="mt-2 pr-4">

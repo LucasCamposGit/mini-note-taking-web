@@ -14,10 +14,10 @@ function MiniNotesInput() {
     dispatch({ type: MINI_NOTES_ACTION.TYPING, payload: event.target.value });
   }, [dispatch]);
 
-  const handleSubmit = useCallback(async (event: React.MouseEvent) => {
+ const handleSubmit = useCallback(async (event: React.MouseEvent) => {
     event.preventDefault();
     if (!dispatch || !state.miniNotes.value.trim()) return;
-
+ 
     let data: Note | null = null;
 
     try {

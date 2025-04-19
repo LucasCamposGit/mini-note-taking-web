@@ -2,6 +2,7 @@ import React from "react";
 import { CardNote } from "./CardNote";
 import { CardReplies } from "./CardReplies";
 import { CardReplyForm } from "./CardReplyForm";
+import CardMenu from "./CardMenu";
 import { CardState } from "@/types/state";
 import { initialCardState } from "@/reducers/cardReducer";
 
@@ -24,5 +25,6 @@ function Card({
 Card.Note = CardNote;
 Card.ReplyForm = CardReplyForm;
 Card.Replies = CardReplies;
+Card.Menu = CardMenu;
 
 export default Card; 
