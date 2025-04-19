@@ -1,7 +1,11 @@
 export default function CardRoot({ children }: { children: React.ReactNode }) {
   return (
-    <div className="border border-gray-700/50 p-5 my-3 rounded-xl backdrop-blur-sm transition-all hover:bg-gray-800/30 hover:border-gray-600/50 shadow-md relative group">
-    {children}
-  </div>
+    <div className="border border-gray-700/50 p-5 my-4 rounded-xl backdrop-blur-sm 
+      bg-gray-900/40 shadow-lg relative group
+      transition-all duration-200 ease-in-out
+      hover:bg-gray-800/50 hover:border-blue-600/30 hover:shadow-blue-900/10
+      dark:hover:shadow-blue-900/5">
+      {children}
+    </div>
   );
 }

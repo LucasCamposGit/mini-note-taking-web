@@ -6,6 +6,9 @@ interface CardNoteProps {
 
 export default function CardNote({ text }: CardNoteProps) {
   return (
-    <p className="text-white mt-1 mb-2 pr-6">{text}</p>
+    <p className="text-white/90 font-light mt-2 mb-3 pr-8 leading-relaxed text-[15px] 
+      whitespace-pre-wrap break-words">
+      {text}
+    </p>
   );
 }

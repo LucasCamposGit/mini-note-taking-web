@@ -14,11 +14,13 @@ export default function CardMenuOption({
 }: CardMenuOptionProps) {
   return (
     <button
-      className="flex items-center text-gray-700 hover:text-blue-400 p-2 rounded-md focus:outline-none"
+      className="flex items-center w-full text-gray-400 hover:text-blue-400 p-2.5 rounded-md 
+      transition-colors duration-150 ease-in-out hover:bg-blue-900/20 focus:outline-none 
+      text-sm font-medium"
       onClick={onOptionClick}
     >
-       <FontAwesomeIcon icon={icon} className="w-3 mr-2" />
-      <span className="ml-2">{label}</span>
+      <FontAwesomeIcon icon={icon} className="w-3 mr-2.5 flex-shrink-0" />
+      <span>{label}</span>
     </button>
   );
 }
