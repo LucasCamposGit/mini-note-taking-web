@@ -16,6 +16,9 @@ export default function MiniNotesPage() {
   const { fetchData, data } = useFetch();
   const replyFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
   const editFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
+  const replyNoteRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
+  const replyEditFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
+  const noteContentRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
 
   useEffect(() => {
     fetchData("/api/notes/tree", "GET");
@@ -48,8 +51,15 @@ export default function MiniNotesPage() {
     }
   }, [state.card.replyingTo]);
 
-  // Effect to handle visibility of edit forms
+  // Effect to handle visibility of edit forms and note content
   useEffect(() => {
+    // Show all note content first
+    Object.values(noteContentRefs.current).forEach(ref => {
+      if (ref) {
+        ref.style.display = 'block';
+      }
+    });
+    
     // Hide all edit forms first
     Object.values(editFormRefs.current).forEach(ref => {
       if (ref) {
@@ -57,11 +67,48 @@ export default function MiniNotesPage() {
       }
     });
     
-    // Show only the active edit form if editingNoteId is not null
+    // For notes being edited, hide the content and show the edit form
     if (state.card.editingNoteId !== null) {
-      const activeFormRef = editFormRefs.current[state.card.editingNoteId];
-      if (activeFormRef) {
-        activeFormRef.style.display = 'block';
+      const noteContentRef = noteContentRefs.current[state.card.editingNoteId];
+      const editFormRef = editFormRefs.current[state.card.editingNoteId];
+      
+      if (noteContentRef) {
+        noteContentRef.style.display = 'none';
+      }
+      
+      if (editFormRef) {
+        editFormRef.style.display = 'block';
+      }
+    }
+  }, [state.card.editingNoteId]);
+
+  // Effect to handle visibility of reply notes and their edit forms
+  useEffect(() => {
+    // Show all reply notes first
+    Object.values(replyNoteRefs.current).forEach(ref => {
+      if (ref) {
+        ref.style.display = 'block';
+      }
+    });
+    
+    // Hide all reply edit forms first
+    Object.values(replyEditFormRefs.current).forEach(ref => {
+      if (ref) {
+        ref.style.display = 'none';
+      }
+    });
+    
+    // For replies being edited, hide the note and show the edit form
+    if (state.card.editingNoteId !== null) {
+      const replyNoteRef = replyNoteRefs.current[state.card.editingNoteId];
+      const replyEditFormRef = replyEditFormRefs.current[state.card.editingNoteId];
+      
+      if (replyNoteRef) {
+        replyNoteRef.style.display = 'none';
+      }
+      
+      if (replyEditFormRef) {
+        replyEditFormRef.style.display = 'block';
       }
     }
   }, [state.card.editingNoteId]);
@@ -73,6 +120,18 @@ export default function MiniNotesPage() {
 
   const setEditFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
     editFormRefs.current[noteId] = el;
+  };
+
+  const setReplyNoteRef = (noteId: number) => (el: HTMLDivElement | null) => {
+    replyNoteRefs.current[noteId] = el;
+  };
+
+  const setReplyEditFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
+    replyEditFormRefs.current[noteId] = el;
+  };
+  
+  const setNoteContentRef = (noteId: number) => (el: HTMLDivElement | null) => {
+    noteContentRefs.current[noteId] = el;
   };
 
   // Handle edit note functionality
@@ -103,13 +162,12 @@ export default function MiniNotesPage() {
             <Card.Root key={note.id}>
               <Card.MenuToggleBtn noteId={note.id} />
               
-              {state.card.editingNoteId === note.id ? (
-                <div ref={setEditFormRef(note.id)}>
-                  <Card.EditForm noteId={note.id} initialText={note.text} />
-                </div>
-              ) : (
+              <div ref={setEditFormRef(note.id)} style={{ display: 'none' }}>
+                <Card.EditForm noteId={note.id} initialText={note.text} />
+              </div>
+              <div ref={setNoteContentRef(note.id)}>
                 <Card.Note text={note.text} />
-              )}
+              </div>
               
               <Card.ReplyBtn noteId={note.id} />
               
@@ -134,13 +192,12 @@ export default function MiniNotesPage() {
               </Card.Menu>
               {note.replies?.map((reply) => (
                 <Card.Reply key={reply.id}>
-                  {state.card.editingNoteId === reply.id ? (
-                    <div ref={setEditFormRef(reply.id)}>
-                      <Card.EditForm noteId={reply.id} initialText={reply.text} />
-                    </div>
-                  ) : (
+                  <div ref={setReplyNoteRef(reply.id)}>
                     <Card.ReplyNote text={reply.text} />
-                  )}
+                  </div>
+                  <div ref={setReplyEditFormRef(reply.id)} style={{ display: 'none' }}>
+                    <Card.EditForm noteId={reply.id} initialText={reply.text} />
+                  </div>
                   <Card.MenuToggleBtn noteId={reply.id} isReply={true} />
                   <Card.Menu noteId={reply.id}>
                     <Card.MenuOption
