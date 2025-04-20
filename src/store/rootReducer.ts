@@ -1,11 +1,10 @@
-import { AppState, initialAppState } from "@/types/state";
-import { AppAction } from "@/types/action";
+import { MiniNotesPageAction } from "@/types/action";
 import { notesReducer } from "./notes/notesReducer";
 import { uiReducer } from "./ui/uiReducer";
 import { authReducer } from "./auth/authReducer";
+import { initialMiniNotesPageState, MiniNotesPageState } from "@/types/state";
 
-// Root reducer that combines all domain reducers
-export const appReducer = (state: AppState = initialAppState, action: AppAction): AppState => {
+export const miniNotesPageReducer = (state: MiniNotesPageState = initialMiniNotesPageState, action: MiniNotesPageAction): MiniNotesPageState => {
   return {
     notes: notesReducer(state.notes, action as any),
     ui: uiReducer(state.ui, action as any),

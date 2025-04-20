@@ -51,7 +51,7 @@ export interface AuthState {
 }
 
 // Root application state combining all domains
-export interface AppState {
+export interface MiniNotesPageState {
   notes: NotesState;
   ui: UIState;
   auth: AuthState;
@@ -108,7 +108,7 @@ export const initialAuthState: AuthState = {
 };
 
 // Root initial state
-export const initialAppState: AppState = {
+export const initialMiniNotesPageState: MiniNotesPageState = {
   notes: initialNotesState,
   ui: initialUIState,
   auth: initialAuthState,

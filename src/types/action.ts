@@ -152,7 +152,7 @@ export type AuthAction =
   | { type: AUTH_ACTION.SET_PREMIUM_STATUS; payload: boolean };
 
 // Root action type that combines all domain actions
-export type AppAction = NotesAction | UIAction | AuthAction;
+export type MiniNotesPageAction = NotesAction | UIAction | AuthAction;
 
 // Legacy action types for backwards compatibility during refactoring
 // mini notes page

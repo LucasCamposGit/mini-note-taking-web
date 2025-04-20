@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useLoginDispatch, LOGIN_CONTEXT_ACTIONS } from "@/context/LoginContext";
+import { useAuthDispatch } from "@/context/LoginContext";
+import { AUTH_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 
 export default function useGoogleSignIn() {
   const router = useRouter();
-  const loginDispatch = useLoginDispatch();
+  const authDispatch = useAuthDispatch();
   const { fetchData } = useFetch();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +45,11 @@ export default function useGoogleSignIn() {
         if (data?.token && data?.refresh_token) {
           localStorage.setItem("access_token", data.token);
           localStorage.setItem("refresh_token", data.refresh_token);
-          loginDispatch({ type: LOGIN_CONTEXT_ACTIONS.LOGIN });
+          authDispatch({ type: AUTH_ACTION.LOGIN_SUCCESS, payload: { 
+            token: data.token, 
+            refreshToken: data.refresh_token,
+            user: profile
+          }});
           router.push("/mini-notes");
         } else {
           throw new Error("Invalid response from server");

@@ -2,115 +2,113 @@
 
 import { createContext, useContext, useEffect, useReducer } from "react";
 import React from "react";
-
-export interface Action {
-  type: LOGIN_CONTEXT_ACTIONS;
-  payload?: State;
-}
-
-interface State {
-  logged: boolean;
-  token: string | null;
-  refresh_token: string | null;
-}
+import { authReducer } from "@/store/auth/authReducer";
+import { AuthState, initialAuthState } from "@/types/state";
+import { AuthAction, AUTH_ACTION } from "@/types/action";
 
 interface Props {
   children: React.ReactNode;
 }
 
-let tokenStorage: string | null = null;
-let refreshTokenStorage: string | null = null;
-let loginDefault = false;
-
-if (typeof window !== "undefined") {
-  tokenStorage = localStorage.getItem("access_token");
-  refreshTokenStorage = localStorage.getItem("refresh_token");
-  loginDefault = !!tokenStorage && !!refreshTokenStorage;
-}
-
-const LoggedContext = createContext<State | undefined>(undefined);
-const LoginDispatchContext = createContext<React.Dispatch<Action> | undefined>(undefined);
-
-export function useLogin(): State {
-  const context = useContext(LoggedContext);
-  if (context === undefined) {
-    throw new Error("useLogin must be used within a LoginProvider");
-  }
-  return context;
-}
-
-export function useLoginDispatch(): React.Dispatch<Action> {
-  const context = useContext(LoginDispatchContext);
-  if (context === undefined) {
-    throw new Error("useLoginDispatch must be used within a LoginProvider");
-  }
-  return context;
-}
-
-export enum LOGIN_CONTEXT_ACTIONS {
-  LOGIN = "login",
-  LOGOUT = "logout",
-  REFRESH_TOKEN = "refresh_token",
-}
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case LOGIN_CONTEXT_ACTIONS.LOGIN: {
-      const token = localStorage.getItem("access_token");
-      const refresh_token = localStorage.getItem("refresh_token");
+// Initialize auth state with values from localStorage if available
+const getInitialAuthState = (): AuthState => {
+  if (typeof window !== "undefined") {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+    
+    if (accessToken && refreshToken) {
       return {
-        ...state,
-        logged: true,
-        token,
-        refresh_token,
+        ...initialAuthState,
+        isAuthenticated: true,
+        tokens: {
+          accessToken,
+          refreshToken
+        }
       };
     }
-    case LOGIN_CONTEXT_ACTIONS.LOGOUT: {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      return {
-        logged: false,
-        token: null,
-        refresh_token: null,
-      };
-    }
-    case LOGIN_CONTEXT_ACTIONS.REFRESH_TOKEN: {
-      if (!action.payload?.token || !action.payload?.refresh_token) {
-        return {
-          logged: false,
-          token: null,
-          refresh_token: null,
-        };
-      }
-      localStorage.setItem("access_token", action.payload.token);
-      localStorage.setItem("refresh_token", action.payload.refresh_token);
-      return {
-        ...state,
-        token: action.payload.token,
-        refresh_token: action.payload.refresh_token,
-      };
-    }
-    default:
-      throw new Error("Invalid action type");
   }
-}
-
-const defaultLoginState: State = {
-  logged: loginDefault,
-  token: tokenStorage,
-  refresh_token: refreshTokenStorage,
+  return initialAuthState;
 };
 
-export function LoginProvider({ children }: Props) {
-  const [loginState, loginDispatch] = useReducer(reducer, defaultLoginState);
+const AuthContext = createContext<AuthState | undefined>(undefined);
+const AuthDispatchContext = createContext<React.Dispatch<AuthAction> | undefined>(undefined);
 
-  useEffect(() => {}, []);
+export function useAuth(): AuthState {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+export function useAuthDispatch(): React.Dispatch<AuthAction> {
+  const context = useContext(AuthDispatchContext);
+  if (context === undefined) {
+    throw new Error("useAuthDispatch must be used within an AuthProvider");
+  }
+  return context;
+}
+
+// Helper functions for common auth actions
+export function useAuthActions() {
+  const dispatch = useAuthDispatch();
+  
+  return {
+    login: (token: string, refreshToken: string, user: any) => {
+      localStorage.setItem("access_token", token);
+      localStorage.setItem("refresh_token", refreshToken);
+      
+      dispatch({
+        type: AUTH_ACTION.LOGIN_SUCCESS,
+        payload: {
+          token,
+          refreshToken,
+          user
+        }
+      });
+    },
+    
+    logout: () => {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      
+      dispatch({
+        type: AUTH_ACTION.LOGOUT
+      });
+    },
+    
+    refreshToken: (token: string, refreshToken: string) => {
+      localStorage.setItem("access_token", token);
+      localStorage.setItem("refresh_token", refreshToken);
+      
+      dispatch({
+        type: AUTH_ACTION.REFRESH_TOKEN_SUCCESS,
+        payload: {
+          token,
+          refreshToken
+        }
+      });
+    }
+  };
+}
+
+export function LoginProvider({ children }: Props) {
+  const [authState, authDispatch] = useReducer(authReducer, getInitialAuthState());
+
+  // You can add token refresh logic or other auth-related effects here
+  useEffect(() => {
+    // Example: Token refresh logic could go here
+  }, []);
 
   return (
-    <LoggedContext.Provider value={loginState}>
-      <LoginDispatchContext.Provider value={loginDispatch}>
+    <AuthContext.Provider value={authState}>
+      <AuthDispatchContext.Provider value={authDispatch}>
         {children}
-      </LoginDispatchContext.Provider>
-    </LoggedContext.Provider>
+      </AuthDispatchContext.Provider>
+    </AuthContext.Provider>
   );
 }
+
+// For backward compatibility with existing code
+export const useLogin = useAuth;
+export const useLoginDispatch = useAuthDispatch;

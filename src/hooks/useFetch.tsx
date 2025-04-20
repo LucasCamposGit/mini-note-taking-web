@@ -2,15 +2,15 @@
 
 import { useState, useCallback, useMemo } from "react";
 import {
-  LOGIN_CONTEXT_ACTIONS,
-  useLogin,
-  useLoginDispatch,
+  useAuth,
+  useAuthDispatch,
 } from "@/context/LoginContext";
+import { AUTH_ACTION } from "@/types/action";
 import { useRouter } from "next/navigation";
 
 const useFetch = () => {
-  const { token } = useLogin();
-  const loginDispatch = useLoginDispatch();
+  const auth = useAuth();
+  const authDispatch = useAuthDispatch();
   const router = useRouter();
   const [data, setData] = useState(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +30,8 @@ const useFetch = () => {
         "Content-Type": "application/json",
       };
       
-      if (authRequired && token) {
-        headers["Authorization"] = `Bearer ${token}`;
+      if (authRequired && auth.tokens?.accessToken) {
+        headers["Authorization"] = `Bearer ${auth.tokens.accessToken}`;
       }
       
       const options: RequestInit = {
@@ -44,22 +44,18 @@ const useFetch = () => {
       let data = await response.json();
 
       if (response.status === 401) {
-        const refresh_token = localStorage.getItem("refresh_token");
-        if (!refresh_token) throw new Error("Token expired. Please login again.");
-
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        const refreshToken = auth.tokens?.refreshToken;
+        if (!refreshToken) throw new Error("Token expired. Please login again.");
 
         if (!apiUrl) throw new Error("API URL not found");
-        const refreshData = await fetchRefreshToken(refresh_token, apiUrl);
+        const refreshData = await fetchRefreshToken(refreshToken, apiUrl);
 
-        loginDispatch({
-          type: LOGIN_CONTEXT_ACTIONS.REFRESH_TOKEN,
+        authDispatch({
+          type: AUTH_ACTION.REFRESH_TOKEN_SUCCESS,
           payload: {
-            logged: true,
             token: refreshData.token,
-            refresh_token: refreshData.refresh_token,
-          },
+            refreshToken: refreshData.refresh_token
+          }
         });
 
         options.headers = {
@@ -75,11 +71,8 @@ const useFetch = () => {
       }
 
       if (response.status === 400) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        loginDispatch({
-          type: LOGIN_CONTEXT_ACTIONS.LOGOUT,
-          payload: { logged: false, token: null, refresh_token: null },
+        authDispatch({
+          type: AUTH_ACTION.LOGOUT
         });
         router.push("/");
       } else if (response.status === 402) {
@@ -99,7 +92,7 @@ const useFetch = () => {
       setError(message);
       return null;
     }
-  }, [apiUrl, token, loginDispatch, router]);
+  }, [apiUrl, auth, authDispatch, router]);
 
   // Memoize the return value to prevent unnecessary re-renders
   const returnValue = useMemo(() => ({
@@ -112,13 +105,13 @@ const useFetch = () => {
   return returnValue;
 };
 
-const fetchRefreshToken = async (refresh_token: string, apiUrl: string) => {
+const fetchRefreshToken = async (refreshToken: string, apiUrl: string) => {
   const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ refresh_token }),
+    body: JSON.stringify({ refresh_token: refreshToken }),
   };
 
   const response = await fetch(`${apiUrl}/api/refresh-token`, options);
