@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { Input } from "./components/input";
 import MiniNotesContext from "./context";
 import { initialRootState, rootReducer } from "@/reducers/rootReducer";
@@ -14,6 +14,7 @@ import { Note } from "@/types/note";
 export default function MiniNotesPage() {
   const [state, dispatch] = useReducer(rootReducer, initialRootState);
   const { fetchData, data } = useFetch();
+  const replyFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
 
   useEffect(() => {
     fetchData("/api/notes/tree", "GET");
@@ -27,6 +28,29 @@ export default function MiniNotesPage() {
       });
     }
   }, [data, dispatch]);
+
+  // Effect to handle visibility of reply forms
+  useEffect(() => {
+    // Hide all reply forms first
+    Object.values(replyFormRefs.current).forEach(ref => {
+      if (ref) {
+        ref.style.display = 'none';
+      }
+    });
+    
+    // Show only the active reply form if replyingTo is not null
+    if (state.card.replyingTo !== null) {
+      const activeFormRef = replyFormRefs.current[state.card.replyingTo];
+      if (activeFormRef) {
+        activeFormRef.style.display = 'block';
+      }
+    }
+  }, [state.card.replyingTo]);
+
+  // Ref callback function
+  const setReplyFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
+    replyFormRefs.current[noteId] = el;
+  };
 
   return (
     <MiniNotesContext.Provider value={{ state, dispatch }}>
@@ -48,7 +72,15 @@ export default function MiniNotesPage() {
             <Card.Root key={note.id}>
               <Card.MenuToggleBtn noteId={note.id} />
               <Card.Note text={note.text} />
-              <Card.ReplyBtn />
+              <Card.ReplyBtn noteId={note.id} />
+              
+              <div 
+                ref={setReplyFormRef(note.id)} 
+                style={{ display: 'none' }}
+              >
+                <Card.ReplyForm noteId={note.id} />
+              </div>
+              
               <Card.Menu noteId={note.id}>
                 <Card.MenuOption
                   icon={faPencilAlt}

@@ -16,7 +16,7 @@ export default function CardMenu({ children, noteId }: CardMenuProps) {
       rounded-lg shadow-lg w-36 overflow-hidden
       transition-all duration-150 ease-in-out
       transform origin-top-right scale-100
-      backdrop-blur-sm">
+      backdrop-blur-sm z-50">
       {children}
     </div>
   );
