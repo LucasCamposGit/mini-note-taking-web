@@ -1,13 +1,14 @@
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMiniNotesContext } from "../../context";
 import { CARD_ACTION } from "@/types/action";
 
 interface CardMenuToggleBtnProps {
   noteId: number;
+  isReply?: boolean;
 }
 
-export default function CardMenuToggleBtn({ noteId }: CardMenuToggleBtnProps) {
+export default function CardMenuToggleBtn({ noteId, isReply = false }: CardMenuToggleBtnProps) {
   const { dispatch } = useMiniNotesContext();
 
   const toggleMenu = () => {
@@ -17,16 +18,21 @@ export default function CardMenuToggleBtn({ noteId }: CardMenuToggleBtnProps) {
     });
   };
 
+  // More precise positioning for main notes and replies
+  const positionClasses = isReply
+    ? "absolute top-0.5 right-1.5 text-gray-500 hover:text-blue-400"
+    : "absolute top-3 right-3 text-gray-500 hover:text-blue-400";
+
   return (
     <button
       onClick={toggleMenu}
-      className="absolute top-3 right-3 text-gray-500 hover:text-blue-400 
-      flex items-center justify-center w-8 h-8 rounded-full
+      className={`${positionClasses} 
+      flex items-center justify-center w-7 h-7 rounded-full
       transition-colors duration-150 ease-in-out
-      hover:bg-gray-800/80 focus:outline-none"
+      hover:bg-gray-800/80 focus:outline-none`}
       aria-label="Menu"
     >
-      <FontAwesomeIcon icon={faEllipsisH} className="w-3" />
+      <FontAwesomeIcon icon={faEllipsisV} className="w-3" />
     </button>
   );
 }

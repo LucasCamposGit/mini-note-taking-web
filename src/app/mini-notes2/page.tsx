@@ -8,13 +8,14 @@ import { Card } from "./components/card";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import useFetch from "@/hooks/useFetch";
-import { MINI_NOTES_ACTION } from "@/types/action";
+import { MINI_NOTES_ACTION, CARD_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
 
 export default function MiniNotesPage() {
   const [state, dispatch] = useReducer(rootReducer, initialRootState);
   const { fetchData, data } = useFetch();
   const replyFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
+  const editFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
 
   useEffect(() => {
     fetchData("/api/notes/tree", "GET");
@@ -47,9 +48,39 @@ export default function MiniNotesPage() {
     }
   }, [state.card.replyingTo]);
 
-  // Ref callback function
+  // Effect to handle visibility of edit forms
+  useEffect(() => {
+    // Hide all edit forms first
+    Object.values(editFormRefs.current).forEach(ref => {
+      if (ref) {
+        ref.style.display = 'none';
+      }
+    });
+    
+    // Show only the active edit form if editingNoteId is not null
+    if (state.card.editingNoteId !== null) {
+      const activeFormRef = editFormRefs.current[state.card.editingNoteId];
+      if (activeFormRef) {
+        activeFormRef.style.display = 'block';
+      }
+    }
+  }, [state.card.editingNoteId]);
+
+  // Ref callback functions
   const setReplyFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
     replyFormRefs.current[noteId] = el;
+  };
+
+  const setEditFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
+    editFormRefs.current[noteId] = el;
+  };
+
+  // Handle edit note functionality
+  const handleEditNote = (noteId: number, text: string) => {
+    dispatch({
+      type: CARD_ACTION.SET_EDITING_NOTE,
+      payload: { noteId, text }
+    });
   };
 
   return (
@@ -71,7 +102,15 @@ export default function MiniNotesPage() {
           {state.miniNotes.notes?.map((note) => (
             <Card.Root key={note.id}>
               <Card.MenuToggleBtn noteId={note.id} />
-              <Card.Note text={note.text} />
+              
+              {state.card.editingNoteId === note.id ? (
+                <div ref={setEditFormRef(note.id)}>
+                  <Card.EditForm noteId={note.id} initialText={note.text} />
+                </div>
+              ) : (
+                <Card.Note text={note.text} />
+              )}
+              
               <Card.ReplyBtn noteId={note.id} />
               
               <div 
@@ -85,7 +124,7 @@ export default function MiniNotesPage() {
                 <Card.MenuOption
                   icon={faPencilAlt}
                   label="Edit"
-                  onOptionClick={() => {}}
+                  onOptionClick={() => handleEditNote(note.id, note.text)}
                 />
                 <Card.MenuOption
                   icon={faTrash}
@@ -95,13 +134,19 @@ export default function MiniNotesPage() {
               </Card.Menu>
               {note.replies?.map((reply) => (
                 <Card.Reply key={reply.id}>
-                  <Card.ReplyNote text={reply.text} />
-                  <Card.MenuToggleBtn noteId={reply.id} />
+                  {state.card.editingNoteId === reply.id ? (
+                    <div ref={setEditFormRef(reply.id)}>
+                      <Card.EditForm noteId={reply.id} initialText={reply.text} />
+                    </div>
+                  ) : (
+                    <Card.ReplyNote text={reply.text} />
+                  )}
+                  <Card.MenuToggleBtn noteId={reply.id} isReply={true} />
                   <Card.Menu noteId={reply.id}>
                     <Card.MenuOption
                       icon={faPencilAlt}
                       label="Edit"
-                      onOptionClick={() => {}}
+                      onOptionClick={() => handleEditNote(reply.id, reply.text)}
                     />
                     <Card.MenuOption
                       icon={faTrash}

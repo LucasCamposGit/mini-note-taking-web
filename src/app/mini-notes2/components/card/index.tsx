@@ -7,6 +7,7 @@ import CardReplyBtn from "./CardReplyBtn";
 import CardReplyForm from "./CardReplyForm";
 import CardReplyNote from "./CardReplyNote";
 import CardRoot from "./CardRoot";
+import CardEditForm from "./CardEditForm";
 
 export const Card = {
   Root: CardRoot,
@@ -16,6 +17,7 @@ export const Card = {
   Reply: CardReply,
   ReplyBtn: CardReplyBtn,
   ReplyForm: CardReplyForm,
+  EditForm: CardEditForm,
   Note: CardNote,
   ReplyNote: CardReplyNote
 };
