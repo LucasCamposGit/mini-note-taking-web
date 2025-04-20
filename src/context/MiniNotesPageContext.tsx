@@ -52,6 +52,3 @@ export function useUIState() {
   return useMiniNotesPageState().ui;
 }
 
-export function useAuthState() {
-  return useMiniNotesPageState().auth;
-}

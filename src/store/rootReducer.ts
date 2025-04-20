@@ -8,6 +8,5 @@ export const miniNotesPageReducer = (state: MiniNotesPageState = initialMiniNote
   return {
     notes: notesReducer(state.notes, action as any),
     ui: uiReducer(state.ui, action as any),
-    auth: authReducer(state.auth, action as any)
   };
 };

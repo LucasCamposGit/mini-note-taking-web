@@ -54,7 +54,6 @@ export interface AuthState {
 export interface MiniNotesPageState {
   notes: NotesState;
   ui: UIState;
-  auth: AuthState;
 }
 
 // Initial state values
@@ -111,7 +110,6 @@ export const initialAuthState: AuthState = {
 export const initialMiniNotesPageState: MiniNotesPageState = {
   notes: initialNotesState,
   ui: initialUIState,
-  auth: initialAuthState,
 };
 
 // Legacy types for backwards compatibility during migration

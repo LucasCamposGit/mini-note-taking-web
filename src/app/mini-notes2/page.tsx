@@ -48,6 +48,7 @@ export default function MiniNotesPage() {
             <Card.Root key={note.id}>
               <Card.MenuToggleBtn noteId={note.id} />
               <Card.Note text={note.text} />
+              <Card.ReplyBtn />
               <Card.Menu noteId={note.id}>
                 <Card.MenuOption
                   icon={faPencilAlt}

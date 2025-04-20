@@ -3,6 +3,7 @@ import CardMenuOption from "./CardMenuOption";
 import CardMenuToggleBtn from "./CardMenuToggleBtn";
 import CardNote from "./CardNote";
 import CardReply from "./CardReply";
+import CardReplyBtn from "./CardReplyBtn";
 import CardReplyNote from "./CardReplyNote";
 import CardRoot from "./CardRoot";
 
@@ -12,6 +13,7 @@ export const Card = {
   Menu: CardMenu,
   MenuOption: CardMenuOption,
   Reply: CardReply,
+  ReplyBtn: CardReplyBtn,
   Note: CardNote,
   ReplyNote: CardReplyNote
 };
