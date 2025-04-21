@@ -9,7 +9,7 @@ import { Card } from "./components/card";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import useFetch from "@/hooks/useFetch";
-import { NOTES_ACTION, UI_ACTION, CARD_ACTION } from "@/types/action";
+import { NOTES_ACTION, UI_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
 
 export default function MiniNotesPage() {

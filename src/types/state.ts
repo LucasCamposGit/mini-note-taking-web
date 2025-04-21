@@ -111,25 +111,3 @@ export const initialMiniNotesPageState: MiniNotesPageState = {
   notes: initialNotesState,
   ui: initialUIState,
 };
-
-// Legacy types for backwards compatibility during migration
-export interface MiniNotesState {
-  notes: Note[] | null;
-  value: string;
-  ui: {
-    isEditing: boolean;
-    isReplying: boolean;
-    activeNoteId: number | null;
-    isSubmitting: boolean;
-  };
-}
-
-export interface CardState {
-  replyingTo: number | null;
-  replyText: string;
-  isSubmitting: boolean;
-  expandedNotes: { [key: number]: boolean };
-  editingNoteId: number | null;
-  editText: string;
-  activeMenuId: number | null;
-}
