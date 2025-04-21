@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useMiniNotesContext } from "../../context";
-import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
+import { NOTES_ACTION, UI_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,7 +20,7 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
   const [editText, setEditText] = useState(initialText);
   const buttonTextRef = useRef<HTMLSpanElement>(null);
 
-  const isSubmitting = state.card.isSubmitting;
+  const isSubmitting = state.notes.pendingOperations.isSubmitting;
 
   // Update character count when edit text changes
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEditText(e.target.value);
     dispatch({
-      type: CARD_ACTION.SET_EDIT_TEXT,
+      type: UI_ACTION.UPDATE_EDIT_TEXT,
       payload: e.target.value
     });
   };
@@ -51,8 +51,8 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
 
     // Set submitting state
     dispatch({
-      type: CARD_ACTION.SET_SUBMITTING_REPLY,
-      payload: true
+      type: NOTES_ACTION.UPDATE_NOTE_REQUEST,
+      payload: { id: noteId }
     });
 
     try {
@@ -64,13 +64,13 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
       // If successful, update the note in state
       if (response) {
         dispatch({
-          type: MINI_NOTES_ACTION.UPDATE_NOTE,
+          type: NOTES_ACTION.UPDATE_NOTE_SUCCESS,
           payload: response as Note
         });
 
         // Reset the edit form
         dispatch({
-          type: CARD_ACTION.RESET_EDIT
+          type: UI_ACTION.CANCEL_EDIT
         });
       }
     } catch (error) {
@@ -78,8 +78,8 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
     } finally {
       // Reset submitting state
       dispatch({
-        type: CARD_ACTION.SET_SUBMITTING_REPLY,
-        payload: false
+        type: NOTES_ACTION.UPDATE_NOTE_FAILURE,
+        payload: "Failed to update note"
       });
     }
   };
@@ -87,7 +87,7 @@ export default function CardEditForm({ noteId, initialText }: CardEditFormProps)
   // Handle cancel edit
   const handleCancel = () => {
     dispatch({
-      type: CARD_ACTION.RESET_EDIT
+      type: UI_ACTION.CANCEL_EDIT
     });
   };
 

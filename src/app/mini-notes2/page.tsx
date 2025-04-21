@@ -3,16 +3,17 @@
 import { useEffect, useReducer, useRef } from "react";
 import { Input } from "./components/input";
 import MiniNotesContext from "./context";
-import { initialRootState, rootReducer } from "@/reducers/rootReducer";
+import { miniNotesPageReducer } from "@/store/rootReducer";
+import { initialMiniNotesPageState } from "@/types/state";
 import { Card } from "./components/card";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import useFetch from "@/hooks/useFetch";
-import { MINI_NOTES_ACTION, CARD_ACTION } from "@/types/action";
+import { NOTES_ACTION, UI_ACTION, CARD_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
 
 export default function MiniNotesPage() {
-  const [state, dispatch] = useReducer(rootReducer, initialRootState);
+  const [state, dispatch] = useReducer(miniNotesPageReducer, initialMiniNotesPageState);
   const { fetchData, data } = useFetch();
   const replyFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
   const editFormRefs = useRef<{[key: number]: HTMLDivElement | null}>({});
@@ -27,7 +28,7 @@ export default function MiniNotesPage() {
   useEffect(() => {
     if (data) {
       dispatch({
-        type: MINI_NOTES_ACTION.LOAD_DATA,
+        type: NOTES_ACTION.FETCH_NOTES_SUCCESS,
         payload: data as Note[],
       });
     }
@@ -43,13 +44,13 @@ export default function MiniNotesPage() {
     });
     
     // Show only the active reply form if replyingTo is not null
-    if (state.card.replyingTo !== null) {
-      const activeFormRef = replyFormRefs.current[state.card.replyingTo];
+    if (state.ui.noteCard.replyingTo !== null) {
+      const activeFormRef = replyFormRefs.current[state.ui.noteCard.replyingTo];
       if (activeFormRef) {
         activeFormRef.style.display = 'block';
       }
     }
-  }, [state.card.replyingTo]);
+  }, [state.ui.noteCard.replyingTo]);
 
   // Effect to handle visibility of edit forms and note content
   useEffect(() => {
@@ -68,9 +69,9 @@ export default function MiniNotesPage() {
     });
     
     // For notes being edited, hide the content and show the edit form
-    if (state.card.editingNoteId !== null) {
-      const noteContentRef = noteContentRefs.current[state.card.editingNoteId];
-      const editFormRef = editFormRefs.current[state.card.editingNoteId];
+    if (state.ui.noteCard.editingNoteId !== null) {
+      const noteContentRef = noteContentRefs.current[state.ui.noteCard.editingNoteId];
+      const editFormRef = editFormRefs.current[state.ui.noteCard.editingNoteId];
       
       if (noteContentRef) {
         noteContentRef.style.display = 'none';
@@ -80,7 +81,7 @@ export default function MiniNotesPage() {
         editFormRef.style.display = 'block';
       }
     }
-  }, [state.card.editingNoteId]);
+  }, [state.ui.noteCard.editingNoteId]);
 
   // Effect to handle visibility of reply notes and their edit forms
   useEffect(() => {
@@ -99,9 +100,9 @@ export default function MiniNotesPage() {
     });
     
     // For replies being edited, hide the note and show the edit form
-    if (state.card.editingNoteId !== null) {
-      const replyNoteRef = replyNoteRefs.current[state.card.editingNoteId];
-      const replyEditFormRef = replyEditFormRefs.current[state.card.editingNoteId];
+    if (state.ui.noteCard.editingNoteId !== null) {
+      const replyNoteRef = replyNoteRefs.current[state.ui.noteCard.editingNoteId];
+      const replyEditFormRef = replyEditFormRefs.current[state.ui.noteCard.editingNoteId];
       
       if (replyNoteRef) {
         replyNoteRef.style.display = 'none';
@@ -111,7 +112,7 @@ export default function MiniNotesPage() {
         replyEditFormRef.style.display = 'block';
       }
     }
-  }, [state.card.editingNoteId]);
+  }, [state.ui.noteCard.editingNoteId]);
 
   // Ref callback functions
   const setReplyFormRef = (noteId: number) => (el: HTMLDivElement | null) => {
@@ -137,8 +138,11 @@ export default function MiniNotesPage() {
   // Handle edit note functionality
   const handleEditNote = (noteId: number, text: string) => {
     dispatch({
-      type: CARD_ACTION.SET_EDITING_NOTE,
-      payload: { noteId, text }
+      type: UI_ACTION.START_EDIT,
+      payload: { 
+        noteId, 
+        text 
+      }
     });
   };
 
@@ -158,7 +162,7 @@ export default function MiniNotesPage() {
             </div>
           </Input.Root>
 
-          {state.miniNotes.notes?.map((note) => (
+          {state.notes.items?.map((note) => (
             <Card.Root key={note.id}>
               <Card.MenuToggleBtn noteId={note.id} />
               

@@ -7,7 +7,7 @@ export default function InputCounter() {
 
   return (
     <div className="text-sm text-gray-400">
-      {state.miniNotes.value.length} / 280
+      {state.notes.currentNote.text.length} / 280
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useMiniNotesContext } from "../../context";
-import { CARD_ACTION, MINI_NOTES_ACTION } from "@/types/action";
+import { UI_ACTION, NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,8 +19,8 @@ export default function CardReplyForm({ noteId }: CardReplyFormProps) {
   const buttonTextRef = useRef<HTMLSpanElement>(null);
 
   // Get the current reply text from the card state
-  const replyText = state.card.replyText || "";
-  const isSubmitting = state.card.isSubmitting;
+  const replyText = state.ui.noteCard.replyText || "";
+  const isSubmitting = state.notes.pendingOperations.isSubmitting;
 
   // Update character count when reply text changes
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function CardReplyForm({ noteId }: CardReplyFormProps) {
   // Handle text input change
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch({
-      type: CARD_ACTION.SET_REPLY_TEXT,
+      type: UI_ACTION.UPDATE_REPLY_TEXT,
       payload: e.target.value
     });
   };
@@ -50,8 +50,8 @@ export default function CardReplyForm({ noteId }: CardReplyFormProps) {
 
     // Set submitting state
     dispatch({
-      type: CARD_ACTION.SET_SUBMITTING_REPLY,
-      payload: true
+      type: NOTES_ACTION.CREATE_REPLY_REQUEST,
+      payload: { parentId: noteId }
     });
 
     try {
@@ -64,22 +64,20 @@ export default function CardReplyForm({ noteId }: CardReplyFormProps) {
       // If successful, add the reply to the state
       if (response) {
         dispatch({
-          type: MINI_NOTES_ACTION.ADD_REPLY,
+          type: NOTES_ACTION.CREATE_REPLY_SUCCESS,
           payload: response as Note
         });
 
         // Reset the reply form
         dispatch({
-          type: CARD_ACTION.RESET_REPLY
+          type: UI_ACTION.CANCEL_REPLY
         });
       }
     } catch (error) {
       console.error("Failed to submit reply:", error);
-    } finally {
-      // Reset submitting state
       dispatch({
-        type: CARD_ACTION.SET_SUBMITTING_REPLY,
-        payload: false
+        type: NOTES_ACTION.CREATE_REPLY_FAILURE,
+        payload: "Failed to submit reply"
       });
     }
   };
@@ -87,7 +85,7 @@ export default function CardReplyForm({ noteId }: CardReplyFormProps) {
   // Handle cancel reply
   const handleCancel = () => {
     dispatch({
-      type: CARD_ACTION.RESET_REPLY
+      type: UI_ACTION.CANCEL_REPLY
     });
   };
 

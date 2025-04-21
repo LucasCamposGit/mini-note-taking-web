@@ -1,7 +1,7 @@
 "use client";
 
 import { useMiniNotesContext } from "../../context";
-import { MINI_NOTES_ACTION } from "@/types/action";
+import { NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { useCallback } from "react";
 import { Note } from "@/types/note";
@@ -16,52 +16,49 @@ export default function InputButton({ onSubmitAction }: InputButtonProps) {
   
   const handleSubmit = useCallback(async () => {
     // Don't submit if empty or already submitting
-    if (!state.miniNotes.value.trim() || state.miniNotes.ui.isSubmitting) {
+    if (!state.notes.currentNote.text.trim() || state.notes.pendingOperations.isSubmitting) {
       return;
     }
     
     // Set submitting state to true
     dispatch({
-      type: MINI_NOTES_ACTION.SET_SUBMITTING,
-      payload: true
+      type: NOTES_ACTION.CREATE_NOTE_REQUEST
     });
     
     try {
       // Call API to create a new note
       const response = await fetchData("/api/notes", "POST", {
-        text: state.miniNotes.value
+        text: state.notes.currentNote.text
       });
       
       // Add the new note to the state
       if (response) {
         dispatch({
-          type: MINI_NOTES_ACTION.ADD_NOTE,
+          type: NOTES_ACTION.CREATE_NOTE_SUCCESS,
           payload: response as Note
         });
         
         // Clear the input
         dispatch({
-          type: MINI_NOTES_ACTION.SUBMIT_NOTE
+          type: NOTES_ACTION.RESET_CURRENT_NOTE
         });
       }
     } catch (error) {
       console.error("Failed to create note:", error);
-    } finally {
-      // Set submitting state back to false
       dispatch({
-        type: MINI_NOTES_ACTION.SET_SUBMITTING,
-        payload: false
+        type: NOTES_ACTION.CREATE_NOTE_FAILURE,
+        payload: "Failed to create note"
       });
     }
-  }, [state.miniNotes.value, state.miniNotes.ui.isSubmitting, dispatch, fetchData]);
+  }, [state.notes.currentNote.text, state.notes.pendingOperations.isSubmitting, dispatch, fetchData]);
   
   return (
     <button
       onClick={handleSubmit}
-      disabled={state.miniNotes.ui.isSubmitting}
+      disabled={state.notes.pendingOperations.isSubmitting}
       className="btn-tweet py-1 px-4 rounded-full disabled:opacity-50"
     >
-      {state.miniNotes.ui.isSubmitting ? "Saving..." : "Take note"}
+      {state.notes.pendingOperations.isSubmitting ? "Saving..." : "Take note"}
     </button>
   );
 }

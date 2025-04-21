@@ -1,22 +1,22 @@
 "use client";
 import { ChangeEvent, use, useEffect, useRef } from "react";
 import { useMiniNotesContext } from "../../context";
-import { MINI_NOTES_ACTION } from "@/types/action";
+import { NOTES_ACTION } from "@/types/action";
 
 export default function InputField() {
   const { state, dispatch } = useMiniNotesContext();
   const placeholderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (placeholderRef.current && state.miniNotes.value.length > 0) {
-      placeholderRef.current.style.opacity = state.miniNotes.value ? "0" : "1";
+    if (placeholderRef.current && state.notes.currentNote.text.length > 0) {
+      placeholderRef.current.style.opacity = state.notes.currentNote.text ? "0" : "1";
     }
   }
-  , [state.miniNotes.value]);
+  , [state.notes.currentNote.text]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch({
-      type: MINI_NOTES_ACTION.TYPING,
+      type: NOTES_ACTION.SET_CURRENT_NOTE_TEXT,
       payload: e.target.value
     });
   };
@@ -26,7 +26,7 @@ export default function InputField() {
       <textarea
         className="w-full p-3 rounded-lg resize-none border-0 bg-transparent text-sm text-white placeholder-transparent focus:outline-none peer min-h-[80px]"
         onChange={handleChange}
-        value={state.miniNotes.value}
+        value={state.notes.currentNote.text}
       ></textarea>
       <div
         ref={placeholderRef}

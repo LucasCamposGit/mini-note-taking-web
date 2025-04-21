@@ -1,24 +1,18 @@
 "use client";
 
 import { createContext, useContext, Dispatch } from "react";
-import { RootState, RootAction } from "@/reducers/rootReducer";
-import { initialMiniNotesState } from "@/reducers/miniNotesReducer";
-import { initialCardState } from "@/reducers/cardReducer";
+import { MiniNotesPageState, initialMiniNotesPageState } from "@/types/state";
+import { MiniNotesPageAction } from "@/types/action";
 
 // Define context type with state and dispatch
 interface MiniNotesContextType {
-  state: RootState;
-  dispatch: Dispatch<RootAction>;
+  state: MiniNotesPageState;
+  dispatch: Dispatch<MiniNotesPageAction>;
 }
-
-const initialState: RootState = {
-  card: initialCardState,
-  miniNotes: initialMiniNotesState
-};
 
 // Initialize context with dummy dispatch function
 const initialContextValue: MiniNotesContextType = {
-  state: initialState,
+  state: initialMiniNotesPageState,
   dispatch: () => null
 };
 
