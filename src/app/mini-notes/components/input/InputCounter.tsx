@@ -1,6 +1,6 @@
 "use client";
 
-import { useMiniNotesPageState } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageState } from "../../context";
 
 export default function InputCounter() {
   const state = useMiniNotesPageState();

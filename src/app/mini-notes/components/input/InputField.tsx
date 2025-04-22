@@ -1,7 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useRef } from "react";
 import { NOTES_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
 
 export default function InputField() {
   const placeholderRef = useRef<HTMLDivElement>(null);

@@ -4,7 +4,7 @@ import { NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { useCallback } from "react";
 import { Note } from "@/types/note";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
 
 interface InputButtonProps {
   onSubmitAction?: () => void;
