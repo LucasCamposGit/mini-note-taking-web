@@ -10,6 +10,9 @@ export default function InputField() {
   useEffect(() => {
     if (placeholderRef.current && state.notes.currentNote.text.length > 0) {
       placeholderRef.current.style.opacity = state.notes.currentNote.text ? "0" : "1";
+    } else if (placeholderRef.current) {
+      placeholderRef.current.style.opacity = state.notes.currentNote.text ? "1" : "0";
+
     }
   }
   , [state.notes.currentNote.text]);
