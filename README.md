@@ -1,136 +1,150 @@
 # Mini Note-Taking App
 
-A minimalist note-taking application designed for those tired of noise and overload. Post short notes, reply to yourself, and keep your thoughts organized with a clean, distraction-free interface.
+A minimalist note-taking application for those tired of noise and overload. Post short notes, reply to yourself, and keep it simple.
 
-## 🌟 Features
+## Table of Contents
+- Overview
+- Tech Stack & Architecture
+- Features
+- Installation & Setup
+- Usage
+- Payment Integration
+- Authentication
+- Project Structure
+- License
 
-- **Minimalist Design**: Focus on content with a clean, distraction-free interface
-- **Character-Limited Notes**: Write concise thoughts with character limits (280 in free plan, 560 in premium)
-- **Nested Replies**: Organize thoughts by replying to your own notes
-- **User Authentication**: Secure login with email or Google authentication
-- **Premium Subscription**: $2/month subscription for extended character limits using Stripe
-- **Responsive Design**: Works seamlessly on mobile and desktop devices
+## Overview
 
-## 🚀 Tech Stack
+Mini Note-Taking is a lightweight, focused note-taking platform built to eliminate the noise and complexity found in many productivity tools. It allows users to capture thoughts in short note format (up to 280 characters in the free tier) and organize them with replies, creating simple threads of thought.
 
-- **Frontend Framework**: Next.js 14 with App Router
-- **Styling**: Tailwind CSS for responsive design
-- **Authentication**: Custom login system with Google OAuth integration
-- **State Management**: React Context API with custom reducers
-- **Payment Processing**: Stripe integration
-- **Icons**: Font Awesome
+The application offers both free and premium tiers:
+- **Free Plan**: Up to 280 characters per note. Basic functionality.
+- **Premium Plan**: $2/month for expanded 560 character limit.
 
-## 📋 Prerequisites
+## Tech Stack & Architecture
 
-- Node.js (v18 or later recommended)
-- npm or yarn package manager
-- Stripe account for payment processing
-- Google OAuth credentials for authentication
+### Core Technologies
+- **Frontend Framework**: Next.js 14.2
+- **Language**: TypeScript
+- **UI Styling**: TailwindCSS
+- **State Management**: Custom React Context API with Reducers
+- **Authentication**: Google OAuth (@react-oauth/google)
+- **Payment Processing**: Stripe
 
-## 🔧 Installation
+### Architecture
+
+This application follows a modern React architecture using the Next.js App Router pattern:
+
+- **Context-based State Management**: Uses a reducer pattern to manage application state across different domains (notes, UI, authentication)
+- **Custom Hooks**: Encapsulates logic for note visibility, data fetching, and authentication
+- **Component Composition**: Uses a component composition pattern (especially in card components) for flexible and reusable UI elements
+
+## Features
+
+- **Minimalist Note Creation**: Simple interface to create short-form notes
+- **Threaded Replies**: Reply to your own notes to create thought threads
+- **Note Management**: Edit and delete capabilities for notes and replies
+- **Character Counter**: Displays remaining character count based on your subscription tier
+- **Responsive Design**: Works on both mobile and desktop devices
+
+## Installation & Setup
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Setup Instructions
 
 1. Clone the repository:
-   ```bash
-   git clone https://your-repository-url/note-taking-app.git
-   cd note-taking-app
-   ```
+```bash
+git clone https://your-repository-url/note-taking-app.git
+cd note-taking-app
+```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+```bash
+npm install
+# or
+yarn
+```
 
 3. Set up environment variables:
-   Create a `.env.local` file in the root directory with the following variables:
-   ```
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-   STRIPE_SECRET_KEY=your_stripe_secret_key
-   GOOGLE_CLIENT_ID=your_google_client_id
-   ```
+Create a .env.local file with the following:
+```
+# Authentication
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+```
 
 4. Run the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
-
-## 🏗️ Project Structure
-
-```
-note-taking-app/
-├── src/
-│   ├── app/                   # Next.js app router directory
-│   │   ├── globals.css        # Global styles
-│   │   ├── mini-notes/        # Notes feature pages and components
-│   │   ├── payment/           # Subscription payment pages
-│   │   └── signup/            # User registration pages
-│   ├── context/               # React context providers
-│   │   ├── LoginContext.tsx   # Authentication state management
-│   │   └── NoteCardContext.tsx # Notes state management
-│   ├── hooks/                 # Custom React hooks
-│   ├── lib/                   # Utility functions and libraries
-│   ├── reducers/              # State reducers
-│   └── types/                 # TypeScript type definitions
-├── public/                    # Static files
-├── tailwind.config.ts        # Tailwind CSS configuration
-└── package.json              # Project dependencies and scripts
-```
-
-## 💰 Subscription Plans
-
-- **Free Plan**:
-  - Up to 280 characters per note
-  - Basic usage
-  - Minimalist experience
-
-- **Premium Plan** ($2/month):
-  - Up to 560 characters per note
-  - Support for the project
-  - Enhanced note-taking experience
-
-## 🔒 Authentication
-
-The app supports two authentication methods:
-- Email/password authentication
-- Google OAuth integration
-
-## 🧩 Core Components
-
-- **MiniNotes**: Main component that displays all user notes
-- **MiniNotesInput**: Component for creating new notes with character limit enforcement
-- **MiniNotesCard**: Component for displaying individual notes and their replies
-
-## 🛠️ Development
-
-### Building for production
-
 ```bash
-npm run build
+npm run dev
 # or
-yarn build
+yarn dev
 ```
 
-### Running in production mode
+5. Visit `http://localhost:3000` to see the application
 
-```bash
-npm run start
-# or
-yarn start
+## Usage
+
+### Creating Notes
+1. Navigate to the Mini Notes page after signing in
+2. Enter your note text in the main input field (character count displayed)
+3. Click "Post" to create your note
+
+### Managing Notes
+- **Reply**: Click the reply button on a note to add a threaded response
+- **Edit**: Use the menu (three dots) to access the edit option
+- **Delete**: Use the menu (three dots) to access the delete option
+
+### Viewing Notes
+- Notes are displayed in chronological order
+- Replies are nested under their parent notes
+
+## Payment Integration
+
+The application uses Stripe for payment processing. Users can upgrade to the premium plan by:
+
+1. Clicking "Upgrade Now" on the homepage
+2. Following the Stripe checkout process
+3. Upon successful payment, user accounts are automatically upgraded to premium status
+
+## Authentication
+
+Authentication is implemented using Google OAuth:
+
+1. Users can sign up/log in using their Google accounts
+2. Authentication state is managed throughout the application
+3. Protected routes require authentication
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router structure
+│   ├── page.tsx            # Homepage
+│   ├── mini-notes/         # Main note-taking functionality
+│   │   ├── components/     # Reusable note components
+│   │   ├── context/        # State management
+│   │   ├── hooks/          # Custom hooks for notes 
+│   │   └── page.tsx        # Notes main page
+│   ├── payment/            # Stripe payment integration
+│   └── signup/             # User authentication components
+├── context/                # Global app contexts
+├── hooks/                  # Global custom hooks
+├── lib/                    # Utility libraries
+├── store/                  # State management reducers
+│   ├── auth/               # Authentication state
+│   ├── notes/              # Notes data state
+│   └── ui/                 # UI state
+└── types/                  # TypeScript type definitions
 ```
 
-## 📝 License
+## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is proprietary and confidential. All rights reserved.
 
-## 🙏 Acknowledgements
-
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Stripe](https://stripe.com/)
-- [Font Awesome](https://fontawesome.com/)
-- [React OAuth Google](https://github.com/MomenSherif/react-oauth-google)
+© 2025 Quiet Notes
