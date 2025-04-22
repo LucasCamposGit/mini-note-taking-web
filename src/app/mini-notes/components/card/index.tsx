@@ -1,5 +1,4 @@
 import CardMenu from "./CardMenu";
-import CardMenuOption from "./CardMenuOption";
 import CardMenuToggleBtn from "./CardMenuToggleBtn";
 import CardNote from "./CardNote";
 import CardReply from "./CardReply";
@@ -8,12 +7,15 @@ import CardReplyForm from "./CardReplyForm";
 import CardReplyNote from "./CardReplyNote";
 import CardRoot from "./CardRoot";
 import CardEditForm from "./CardEditForm";
+import CardMenuDeleteOption from "./CardMenuDeleteOption";
+import CardMenuEditOption from "./CardMenuEditOption";
 
 export const Card = {
   Root: CardRoot,
   MenuToggleBtn: CardMenuToggleBtn,
   Menu: CardMenu,
-  MenuOption: CardMenuOption,
+  MenuDeleteOption: CardMenuDeleteOption,
+  MenuEditOption: CardMenuEditOption,
   Reply: CardReply,
   ReplyBtn: CardReplyBtn,
   ReplyForm: CardReplyForm,

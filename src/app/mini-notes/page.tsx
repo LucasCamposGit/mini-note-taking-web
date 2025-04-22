@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "./components/input";
-import MiniNotesContext from "./context";
-import { miniNotesPageReducer } from "@/store/rootReducer";
-import { initialMiniNotesPageState } from "@/types/state";
 import { Card } from "./components/card";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import useFetch from "@/hooks/useFetch";
 import { NOTES_ACTION, UI_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
+import {
+  MiniNotesPageProvider,
+  useMiniNotesPageDispatch,
+  useMiniNotesPageState,
+} from "@/context/MiniNotesPageContext";
 
 export default function MiniNotesPage() {
-  const [state, dispatch] = useReducer(
-    miniNotesPageReducer,
-    initialMiniNotesPageState
-  );
+  const dispatch = useMiniNotesPageDispatch();
+  const state = useMiniNotesPageState();
+
   const { fetchData, data } = useFetch();
   const replyFormRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const editFormRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
@@ -44,7 +44,7 @@ export default function MiniNotesPage() {
                 "text" in item &&
                 "created_at" in item
             );
-    
+
             if (isValidNoteArray) {
               dispatch({
                 type: NOTES_ACTION.FETCH_NOTES_SUCCESS,
@@ -167,123 +167,65 @@ export default function MiniNotesPage() {
   };
 
   // Handle edit note functionality
-  const handleEditNote = (noteId: number, text: string) => {
-    dispatch({
-      type: UI_ACTION.START_EDIT,
-      payload: {
-        noteId,
-        text,
-      },
-    });
-  };
-
-  const handleDeleteNote = async (noteId: number) => {
-    dispatch({
-      type: NOTES_ACTION.DELETE_NOTE_REQUEST,
-      payload: { id: noteId },
-    });
-
-    try {
-      const response = await fetchData(`/api/notes/${noteId}`, "DELETE");
-
-      console.log("Delete API response:", response);
-
-      dispatch({
-        type: NOTES_ACTION.DELETE_NOTE_SUCCESS,
-        payload: { id: noteId },
-      });
-    } catch (error) {
-      console.error("Failed to delete note:", error);
-
-      // Handle error if deletion fails
-      dispatch({
-        type: NOTES_ACTION.DELETE_NOTE_FAILURE,
-        payload: "Failed to delete note",
-      });
-    }
-  };
 
   return (
-    <MiniNotesContext.Provider value={{ state, dispatch }}>
-      <main className="min-h-screen p-4 md:p-6">
-        <div className="max-w-xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-light mb-6 text-center tracking-wide">
-            Mini Notes
-          </h1>
+    <main className="min-h-screen p-4 md:p-6">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl md:text-3xl font-light mb-6 text-center tracking-wide">
+          Mini Notes
+        </h1>
 
-          <Input.Root>
-            <Input.Field />
-            <div className="flex justify-between items-center min-w-96 ">
-              <Input.Counter />
-              <Input.Button />
-            </div>
-          </Input.Root>
+        <Input.Root>
+          <Input.Field />
+          <div className="flex justify-between items-center min-w-96 ">
+            <Input.Counter />
+            <Input.Button />
+          </div>
+        </Input.Root>
 
-          {Array.isArray(state.notes.items) &&
-            state.notes.items?.map((note) => (
-              <Card.Root key={note.id}>
-                <Card.MenuToggleBtn noteId={note.id} />
+        {Array.isArray(state.notes.items) &&
+          state.notes.items?.map((note) => (
+            <Card.Root key={note.id}>
+              <Card.MenuToggleBtn noteId={note.id} />
 
-                <div ref={setEditFormRef(note.id)} style={{ display: "none" }}>
-                  <Card.EditForm noteId={note.id} initialText={note.text} />
-                </div>
-                <div ref={setNoteContentRef(note.id)}>
-                  <Card.Note text={note.text} />
-                </div>
+              <div ref={setEditFormRef(note.id)} style={{ display: "none" }}>
+                <Card.EditForm noteId={note.id} initialText={note.text} />
+              </div>
+              <div ref={setNoteContentRef(note.id)}>
+                <Card.Note text={note.text} />
+              </div>
 
-                <Card.ReplyBtn noteId={note.id} />
+              <Card.ReplyBtn noteId={note.id} />
 
-                <div ref={setReplyFormRef(note.id)} style={{ display: "none" }}>
-                  <Card.ReplyForm noteId={note.id} />
-                </div>
+              <div ref={setReplyFormRef(note.id)} style={{ display: "none" }}>
+                <Card.ReplyForm noteId={note.id} />
+              </div>
 
-                <Card.Menu noteId={note.id}>
-                  <Card.MenuOption
-                    icon={faPencilAlt}
-                    label="Edit"
-                    onOptionClick={() => handleEditNote(note.id, note.text)}
-                  />
-                  <Card.MenuOption
-                    icon={faTrash}
-                    label="Delete"
-                    onOptionClick={() => handleDeleteNote(note.id)}
-                  />
-                </Card.Menu>
-                {note.replies?.map((reply) => (
-                  <Card.Reply key={reply.id}>
-                    <div ref={setReplyNoteRef(reply.id)}>
-                      <Card.ReplyNote text={reply.text} />
-                    </div>
-                    <div
-                      ref={setReplyEditFormRef(reply.id)}
-                      style={{ display: "none" }}
-                    >
-                      <Card.EditForm
-                        noteId={reply.id}
-                        initialText={reply.text}
-                      />
-                    </div>
-                    <Card.MenuToggleBtn noteId={reply.id} isReply={true} />
-                    <Card.Menu noteId={reply.id}>
-                      <Card.MenuOption
-                        icon={faPencilAlt}
-                        label="Edit"
-                        onOptionClick={() =>
-                          handleEditNote(reply.id, reply.text)
-                        }
-                      />
-                      <Card.MenuOption
-                        icon={faTrash}
-                        label="Delete"
-                        onOptionClick={() => handleDeleteNote(reply.id)}
-                      />
-                    </Card.Menu>
-                  </Card.Reply>
-                ))}
-              </Card.Root>
-            ))}
-        </div>
-      </main>
-    </MiniNotesContext.Provider>
+              <Card.Menu noteId={note.id}>
+                <Card.MenuEditOption noteId={note.id} text={note.text} />
+                <Card.MenuDeleteOption noteId={note.id} />
+              </Card.Menu>
+              {note.replies?.map((reply) => (
+                <Card.Reply key={reply.id}>
+                  <div ref={setReplyNoteRef(reply.id)}>
+                    <Card.ReplyNote text={reply.text} />
+                  </div>
+                  <div
+                    ref={setReplyEditFormRef(reply.id)}
+                    style={{ display: "none" }}
+                  >
+                    <Card.EditForm noteId={reply.id} initialText={reply.text} />
+                  </div>
+                  <Card.MenuToggleBtn noteId={reply.id} isReply={true} />
+                  <Card.Menu noteId={reply.id}>
+                    <Card.MenuEditOption noteId={reply.id} text={reply.text} />
+                    <Card.MenuDeleteOption noteId={reply.id} />
+                  </Card.Menu>
+                </Card.Reply>
+              ))}
+            </Card.Root>
+          ))}
+      </div>
+    </main>
   );
 }

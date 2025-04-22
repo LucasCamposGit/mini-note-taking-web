@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useMiniNotesContext } from "../../context";
 import { NOTES_ACTION, UI_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faSave } from "@fortawesome/free-solid-svg-icons";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
 
 interface CardEditFormProps {
   noteId: number;
@@ -14,7 +14,8 @@ interface CardEditFormProps {
 }
 
 export default function CardEditForm({ noteId, initialText }: CardEditFormProps) {
-  const { state, dispatch } = useMiniNotesContext();
+  const dispatch = useMiniNotesPageDispatch();
+  const state = useMiniNotesPageState();
   const { fetchData } = useFetch();
   const [charCount, setCharCount] = useState(0);
   const [editText, setEditText] = useState(initialText);

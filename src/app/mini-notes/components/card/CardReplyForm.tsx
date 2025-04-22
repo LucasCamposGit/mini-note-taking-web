@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useMiniNotesContext } from "../../context";
 import { UI_ACTION, NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
 
 interface CardReplyFormProps {
   noteId: number;
 }
 
 export default function CardReplyForm({ noteId }: CardReplyFormProps) {
-  const { state, dispatch } = useMiniNotesContext();
+  const dispatch = useMiniNotesPageDispatch();
+  const state = useMiniNotesPageState();
+
   const { fetchData } = useFetch();
   const [charCount, setCharCount] = useState(0);
   const buttonTextRef = useRef<HTMLSpanElement>(null);

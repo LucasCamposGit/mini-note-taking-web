@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useMiniNotesContext } from "../../context";
 import { UI_ACTION } from "@/types/action";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
 
 interface CardMenuProps {
   children: React.ReactNode;
@@ -8,7 +8,8 @@ interface CardMenuProps {
 }
 
 export default function CardMenu({ children, noteId }: CardMenuProps) {
-  const { state, dispatch } = useMiniNotesContext();
+  const dispatch = useMiniNotesPageDispatch();
+  const state = useMiniNotesPageState();
   const menuRef = useRef<HTMLDivElement>(null);
   const isVisible = state.ui.noteCard.activeMenuId === noteId;
   

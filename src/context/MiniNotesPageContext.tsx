@@ -14,7 +14,7 @@ interface MiniNotesContextType {
 const MiniNotesContext = createContext<MiniNotesContextType | undefined>(undefined);
 
 // Create a provider component
-export function AppProvider({ children }: { children: ReactNode }) {
+export function MiniNotesPageProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(miniNotesPageReducer, initialMiniNotesPageState);
 
   // Provide the state and dispatch to all children components

@@ -1,18 +1,20 @@
 "use client";
-import { ChangeEvent, use, useEffect, useRef } from "react";
-import { useMiniNotesContext } from "../../context";
+import { ChangeEvent, useEffect, useRef } from "react";
 import { NOTES_ACTION } from "@/types/action";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
 
 export default function InputField() {
-  const { state, dispatch } = useMiniNotesContext();
   const placeholderRef = useRef<HTMLDivElement>(null);
+  const state = useMiniNotesPageState();
+  const dispatch = useMiniNotesPageDispatch();
 
   useEffect(() => {
     if (placeholderRef.current && state.notes.currentNote.text.length > 0) {
-      placeholderRef.current.style.opacity = state.notes.currentNote.text ? "0" : "1";
-    } else if (placeholderRef.current) {
-      placeholderRef.current.style.opacity = state.notes.currentNote.text ? "1" : "0";
-
+      placeholderRef.current.style.opacity = "0";
+    } 
+    
+    if (placeholderRef.current && state.notes.currentNote.text.length == 0) {
+      placeholderRef.current.style.opacity = "1";
     }
   }
   , [state.notes.currentNote.text]);

@@ -2,15 +2,15 @@
 
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useMiniNotesContext } from "../../context";
 import { UI_ACTION } from "@/types/action";
+import { useMiniNotesPageDispatch } from "@/context/MiniNotesPageContext";
 
 interface CardReplyBtnProps {
   noteId: number;
 }
 
 export default function CardReplyBtn({ noteId }: CardReplyBtnProps) {
-  const { state, dispatch } = useMiniNotesContext();
+  const dispatch = useMiniNotesPageDispatch();
   
   const handleReplyClick = () => {
     dispatch({

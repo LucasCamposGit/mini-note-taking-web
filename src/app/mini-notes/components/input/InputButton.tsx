@@ -1,18 +1,19 @@
 "use client";
 
-import { useMiniNotesContext } from "../../context";
 import { NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { useCallback } from "react";
 import { Note } from "@/types/note";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
 
 interface InputButtonProps {
   onSubmitAction?: () => void;
 }
 
 export default function InputButton({ onSubmitAction }: InputButtonProps) {
-  const { state, dispatch } = useMiniNotesContext();
   const { fetchData } = useFetch();
+  const dispatch = useMiniNotesPageDispatch();
+  const state = useMiniNotesPageState();
   
   const handleSubmit = useCallback(async () => {
     // Don't submit if empty or already submitting
