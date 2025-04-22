@@ -3,7 +3,7 @@
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMiniNotesContext } from "../../context";
-import { CARD_ACTION } from "@/types/action";
+import { UI_ACTION } from "@/types/action";
 
 interface CardReplyBtnProps {
   noteId: number;
@@ -14,7 +14,7 @@ export default function CardReplyBtn({ noteId }: CardReplyBtnProps) {
   
   const handleReplyClick = () => {
     dispatch({
-      type: CARD_ACTION.SET_REPLYING_TO,
+      type: UI_ACTION.START_REPLY,
       payload: noteId
     });
   };
