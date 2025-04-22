@@ -1,7 +1,6 @@
-import { useMiniNotesPageDispatch } from "@/context/MiniNotesPageContext";
-import useFetch from "@/hooks/useFetch";
-import { NOTES_ACTION, UI_ACTION } from "@/types/action";
-import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useMiniNotesPageDispatch } from "../../context";
+import { UI_ACTION } from "@/types/action";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface CardMenuEditOptionProps {

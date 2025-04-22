@@ -1,4 +1,4 @@
-import { useMiniNotesPageDispatch } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch } from "../../context";
 import useFetch from "@/hooks/useFetch";
 import { NOTES_ACTION } from "@/types/action";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";

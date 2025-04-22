@@ -1,4 +1,3 @@
-import { useMiniNotesContext } from "../../context";
 
 interface CardNoteProps {
   text: string;

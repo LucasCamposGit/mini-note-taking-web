@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faSave } from "@fortawesome/free-solid-svg-icons";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
 
 interface CardEditFormProps {
   noteId: number;

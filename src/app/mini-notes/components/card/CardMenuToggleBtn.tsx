@@ -1,7 +1,7 @@
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UI_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch } from "../../context";
 
 interface CardMenuToggleBtnProps {
   noteId: number;

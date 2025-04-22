@@ -1,4 +1,3 @@
-import { Note } from "@/types/note";
 
 interface CardReplyProps {
   children: React.ReactNode;

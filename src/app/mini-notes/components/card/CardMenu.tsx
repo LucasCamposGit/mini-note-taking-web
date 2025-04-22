@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { UI_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "@/context/MiniNotesPageContext";
+import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
 
 interface CardMenuProps {
   children: React.ReactNode;

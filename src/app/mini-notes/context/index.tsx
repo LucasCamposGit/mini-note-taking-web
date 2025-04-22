@@ -51,4 +51,3 @@ export function useNotesState() {
 export function useUIState() {
   return useMiniNotesPageState().ui;
 }
-

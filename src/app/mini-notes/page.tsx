@@ -3,15 +3,13 @@
 import { useEffect, useRef } from "react";
 import { Input } from "./components/input";
 import { Card } from "./components/card";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import useFetch from "@/hooks/useFetch";
 import { NOTES_ACTION, UI_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
 import {
-  MiniNotesPageProvider,
   useMiniNotesPageDispatch,
   useMiniNotesPageState,
-} from "@/context/MiniNotesPageContext";
+} from "./context";
 
 export default function MiniNotesPage() {
   const dispatch = useMiniNotesPageDispatch();
