@@ -1,20 +1,35 @@
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UI_ACTION } from "@/types/action";
-import  useDispatch  from "../../context/DispatchContext";
+import useDispatch from "../../context/DispatchContext";
+import useUI from "../../context/UIContext";
 
 interface CardMenuToggleBtnProps {
   noteId: number;
   isReply?: boolean;
 }
 
-export default function CardMenuToggleBtn({ noteId, isReply = false }: CardMenuToggleBtnProps) {
+export default function CardMenuToggleBtn({
+  noteId,
+  isReply = false,
+}: CardMenuToggleBtnProps) {
   const dispatch = useDispatch();
+  const ui = useUI();
 
-  const toggleMenu = () => {
+  const toggleMenu = (e: React.MouseEvent) => {
+
+    if (ui.noteCard.activeMenuId === noteId) {
+      // If the menu is already open, close it by setting activeMenuId to null
+      dispatch({
+        type: UI_ACTION.SET_ACTIVE_MENU,
+        payload: null,
+      });
+
+      return;
+    }
     dispatch({
       type: UI_ACTION.SET_ACTIVE_MENU,
-      payload: noteId
+      payload: noteId,
     });
   };
 

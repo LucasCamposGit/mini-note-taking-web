@@ -16,6 +16,7 @@ export default function CardMenu({ children, noteId }: CardMenuProps) {
   
   useEffect(() => {
     // Handler for clicks outside the menu
+
     const handleOutsideClick = (event: MouseEvent) => {
       if (isVisible && menuRef.current && !menuRef.current.contains(event.target as Node)) {
         // Toggle the currently active menu by sending its ID
@@ -28,14 +29,14 @@ export default function CardMenu({ children, noteId }: CardMenuProps) {
     
     // Add the event listener when menu is visible
     if (isVisible) {
-      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('click', handleOutsideClick);
     }
     
     // Clean up event listener when component unmounts or menu closes
     return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('click', handleOutsideClick);
     };
-  }, [isVisible, dispatch, noteId]);
+  }, [isVisible, noteId]);
 
   if (!isVisible) return null;
 

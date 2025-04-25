@@ -41,7 +41,7 @@ export default function MiniNotesPage() {
 
           {Array.isArray(notes.items) &&
             notes.items?.map((note) => (
-              <Card.Root key={note.id}>
+              <Card.Root key={note.id} noteId={note.id}>
                 <Card.MenuToggleBtn noteId={note.id} />
 
                 <div ref={setEditFormRef(note.id)} style={{ display: "none" }}>
