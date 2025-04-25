@@ -1,13 +1,14 @@
 "use client";
 
-import { useMiniNotesPageState } from "../../context";
+import  useNotes  from "../../context/NotesContext";
+
 
 export default function InputCounter() {
-  const state = useMiniNotesPageState();
+  const notes = useNotes();
 
   return (
     <div className="text-sm text-gray-400">
-      {state.notes.currentNote.text.length} / 280
+      {notes.currentNote.text.length} / 280
     </div>
   );
 }

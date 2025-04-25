@@ -1,23 +1,24 @@
 "use client";
 import { ChangeEvent, useEffect, useRef } from "react";
 import { NOTES_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
+import  useNotes  from "../../context/NotesContext";
 
 export default function InputField() {
   const placeholderRef = useRef<HTMLDivElement>(null);
-  const state = useMiniNotesPageState();
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
+  const notes = useNotes();
 
   useEffect(() => {
-    if (placeholderRef.current && state.notes.currentNote.text.length > 0) {
+    if (placeholderRef.current && notes.currentNote.text.length > 0) {
       placeholderRef.current.style.opacity = "0";
     } 
     
-    if (placeholderRef.current && state.notes.currentNote.text.length == 0) {
+    if (placeholderRef.current && notes.currentNote.text.length == 0) {
       placeholderRef.current.style.opacity = "1";
     }
   }
-  , [state.notes.currentNote.text]);
+  , [notes.currentNote.text]);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch({
@@ -31,7 +32,7 @@ export default function InputField() {
       <textarea
         className="w-full p-3 rounded-lg resize-none border-0 bg-transparent text-sm text-white placeholder-transparent focus:outline-none peer min-h-[80px]"
         onChange={handleChange}
-        value={state.notes.currentNote.text}
+        value={notes.currentNote.text}
       ></textarea>
       <div
         ref={placeholderRef}

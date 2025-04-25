@@ -6,7 +6,8 @@ import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faSave } from "@fortawesome/free-solid-svg-icons";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
+import  useNotes  from "../../context/NotesContext";
 
 interface CardEditFormProps {
   noteId: number;
@@ -14,14 +15,14 @@ interface CardEditFormProps {
 }
 
 export default function CardEditForm({ noteId, initialText }: CardEditFormProps) {
-  const dispatch = useMiniNotesPageDispatch();
-  const state = useMiniNotesPageState();
+  const dispatch = useDispatch();
+  const notes = useNotes();
   const { fetchData } = useFetch();
   const [charCount, setCharCount] = useState(0);
   const [editText, setEditText] = useState(initialText);
   const buttonTextRef = useRef<HTMLSpanElement>(null);
 
-  const isSubmitting = state.notes.pendingOperations.isSubmitting;
+  const isSubmitting = notes.pendingOperations.isSubmitting;
 
   // Update character count when edit text changes
   useEffect(() => {

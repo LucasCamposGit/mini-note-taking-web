@@ -1,7 +1,7 @@
-import { useMiniNotesPageDispatch } from "../../context";
 import { UI_ACTION } from "@/types/action";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import  useDispatch  from "../../context/DispatchContext";
 
 interface CardMenuEditOptionProps {
   noteId: number;
@@ -12,7 +12,7 @@ export default function CardMenuEditOption({
   noteId,
   text
 }: CardMenuEditOptionProps) {
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
 
   const handleEditNote = (noteId: number, text: string) => {
     dispatch({

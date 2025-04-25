@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { UI_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
+import  useUI  from "../../context/UIContext";
 
 interface CardMenuProps {
   children: React.ReactNode;
@@ -8,10 +9,10 @@ interface CardMenuProps {
 }
 
 export default function CardMenu({ children, noteId }: CardMenuProps) {
-  const dispatch = useMiniNotesPageDispatch();
-  const state = useMiniNotesPageState();
+  const dispatch = useDispatch();
+  const ui = useUI();
   const menuRef = useRef<HTMLDivElement>(null);
-  const isVisible = state.ui.noteCard.activeMenuId === noteId;
+  const isVisible = ui.noteCard.activeMenuId === noteId;
   
   useEffect(() => {
     // Handler for clicks outside the menu

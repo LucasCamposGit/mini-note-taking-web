@@ -1,4 +1,4 @@
-import { MiniNotesPageProvider } from "./context";
+import MiniNotesPageProvider from "./context/MiniNotesPageContext";
 
 export default function MiniNotesLayout({
   children,

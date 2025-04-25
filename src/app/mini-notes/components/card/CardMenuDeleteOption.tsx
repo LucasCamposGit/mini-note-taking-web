@@ -1,8 +1,8 @@
-import { useMiniNotesPageDispatch } from "../../context";
 import useFetch from "@/hooks/useFetch";
 import { NOTES_ACTION } from "@/types/action";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import  useDispatch  from "../../context/DispatchContext";
 
 interface CardMenuDeleteOptionProps {
   noteId: number;
@@ -11,7 +11,7 @@ interface CardMenuDeleteOptionProps {
 export default function CardMenuDeleteOption({
   noteId,
 }: CardMenuDeleteOptionProps) {
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
   const { fetchData } = useFetch();
 
   const handleDeleteNote = async (noteId: number) => {

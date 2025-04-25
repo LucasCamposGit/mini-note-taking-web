@@ -6,23 +6,26 @@ import useFetch from "@/hooks/useFetch";
 import { Note } from "@/types/note";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
+import  useUI  from "../../context/UIContext";
+import  useNotes  from "../../context/NotesContext";
 
 interface CardReplyFormProps {
   noteId: number;
 }
 
 export default function CardReplyForm({ noteId }: CardReplyFormProps) {
-  const dispatch = useMiniNotesPageDispatch();
-  const state = useMiniNotesPageState();
+  const dispatch = useDispatch();
+  const ui = useUI();
+  const notes = useNotes();
 
   const { fetchData } = useFetch();
   const [charCount, setCharCount] = useState(0);
   const buttonTextRef = useRef<HTMLSpanElement>(null);
 
   // Get the current reply text from the card state
-  const replyText = state.ui.noteCard.replyText || "";
-  const isSubmitting = state.notes.pendingOperations.isSubmitting;
+  const replyText = ui.noteCard.replyText || "";
+  const isSubmitting = notes.pendingOperations.isSubmitting;
 
   // Update character count when reply text changes
   useEffect(() => {

@@ -9,6 +9,7 @@ import CardRoot from "./CardRoot";
 import CardEditForm from "./CardEditForm";
 import CardMenuDeleteOption from "./CardMenuDeleteOption";
 import CardMenuEditOption from "./CardMenuEditOption";
+import CardRepliesToggleBtn from "./CardRepliesToggleBtn";
 
 export const Card = {
   Root: CardRoot,
@@ -21,5 +22,6 @@ export const Card = {
   ReplyForm: CardReplyForm,
   EditForm: CardEditForm,
   Note: CardNote,
-  ReplyNote: CardReplyNote
+  ReplyNote: CardReplyNote,
+  RepliesToggleBtn: CardRepliesToggleBtn
 };

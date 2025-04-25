@@ -4,7 +4,8 @@ import { NOTES_ACTION } from "@/types/action";
 import useFetch from "@/hooks/useFetch";
 import { useCallback } from "react";
 import { Note } from "@/types/note";
-import { useMiniNotesPageDispatch, useMiniNotesPageState } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
+import  useNotes  from "../../context/NotesContext";
 
 interface InputButtonProps {
   onSubmitAction?: () => void;
@@ -12,12 +13,12 @@ interface InputButtonProps {
 
 export default function InputButton({ onSubmitAction }: InputButtonProps) {
   const { fetchData } = useFetch();
-  const dispatch = useMiniNotesPageDispatch();
-  const state = useMiniNotesPageState();
+  const dispatch = useDispatch();
+  const notes = useNotes();
   
   const handleSubmit = useCallback(async () => {
     // Don't submit if empty or already submitting
-    if (!state.notes.currentNote.text.trim() || state.notes.pendingOperations.isSubmitting) {
+    if (!notes.currentNote.text.trim() || notes.pendingOperations.isSubmitting) {
       return;
     }
     
@@ -29,7 +30,7 @@ export default function InputButton({ onSubmitAction }: InputButtonProps) {
     try {
       // Call API to create a new note
       const response = await fetchData("/api/notes", "POST", {
-        text: state.notes.currentNote.text
+        text: notes.currentNote.text
       });
       
       // Add the new note to the state
@@ -51,15 +52,15 @@ export default function InputButton({ onSubmitAction }: InputButtonProps) {
         payload: "Failed to create note"
       });
     }
-  }, [state.notes.currentNote.text, state.notes.pendingOperations.isSubmitting, dispatch, fetchData]);
+  }, [notes.currentNote.text, notes.pendingOperations.isSubmitting, dispatch, fetchData]);
   
   return (
     <button
       onClick={handleSubmit}
-      disabled={state.notes.pendingOperations.isSubmitting}
+      disabled={notes.pendingOperations.isSubmitting}
       className="btn-tweet py-1 px-4 rounded-full disabled:opacity-50"
     >
-      {state.notes.pendingOperations.isSubmitting ? "Saving..." : "Take note"}
+      {notes.pendingOperations.isSubmitting ? "Saving..." : "Take note"}
     </button>
   );
 }

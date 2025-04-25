@@ -3,14 +3,14 @@
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UI_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
 
 interface CardReplyBtnProps {
   noteId: number;
 }
 
 export default function CardReplyBtn({ noteId }: CardReplyBtnProps) {
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
   
   const handleReplyClick = () => {
     dispatch({

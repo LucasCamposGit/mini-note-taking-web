@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { NOTES_ACTION } from "@/types/action";
 import { Note } from "@/types/note";
-import { useMiniNotesPageDispatch } from "../context";
 import useFetch from "@/hooks/useFetch";
+import  useDispatch  from "../context/DispatchContext";
 
 export function useNotesData() {
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
   const { fetchData } = useFetch();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UI_ACTION } from "@/types/action";
-import { useMiniNotesPageDispatch } from "../../context";
+import  useDispatch  from "../../context/DispatchContext";
 
 interface CardMenuToggleBtnProps {
   noteId: number;
@@ -9,7 +9,7 @@ interface CardMenuToggleBtnProps {
 }
 
 export default function CardMenuToggleBtn({ noteId, isReply = false }: CardMenuToggleBtnProps) {
-  const dispatch = useMiniNotesPageDispatch();
+  const dispatch = useDispatch();
 
   const toggleMenu = () => {
     dispatch({
